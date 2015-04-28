@@ -10,12 +10,14 @@ class Matrix4
 
   public:
     double m[4][4];   // matrix elements; first index is for rows, second for columns (row-major)
+    float f_m[4][4];
     Matrix4();
     Matrix4(double);
     Matrix4(Vector3, Vector3, Vector3, Vector3);
     Matrix4& operator=(const Matrix4&);
-    double* getPointer(); 
-    void identity(); 
+    double* getPointer();
+    float* getFloatPointer();
+    void identity();
     void transpose();
     void makeRotateY(double);
     

@@ -2,7 +2,6 @@ uniform sampler2D tex;
 uniform sampler2D norm;
 uniform sampler2D gloss;
 uniform sampler2D metallic;
-
 varying vec4 Position;
 varying vec3 Normal;
 varying vec2 TexCoords;
@@ -71,7 +70,6 @@ vec3 phongModel(vec3 normal, vec3 diffR){
 void main() {
     vec4 normal = 2.0 * texture2D(norm, TexCoords) - 1.0;
     vec4 texColor = texture2D(tex, TexCoords);
-    
     float dist = length(Position.xyz);
     float fogFactor = (maxDist - dist)/(maxDist-minDist);
     fogFactor = clamp(fogFactor, 0.0, 1.0);

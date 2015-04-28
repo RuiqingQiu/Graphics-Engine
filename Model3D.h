@@ -14,6 +14,7 @@
 #include <iostream>
 #include "tiny_obj_loader.h"
 #include <GLUT/glut.h>
+#include "Matrix4.h"
 using namespace std;
 
 class Model3D

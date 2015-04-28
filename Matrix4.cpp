@@ -64,6 +64,16 @@ double* Matrix4::getPointer()
   return &m[0][0];
 }
 
+float* Matrix4::getFloatPointer()
+{
+    for(int i = 0; i < 4; i++){
+        for(int j = 0; j < 4; j++){
+            f_m[i][j] = m[i][j];
+        }
+    }
+    return&f_m[0][0];
+}
+
 // set matrix to identity matrix
 void Matrix4::identity()
 {

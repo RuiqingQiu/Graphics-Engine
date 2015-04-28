@@ -323,6 +323,9 @@ void Model3D::OnDraw(){
     //Set the OpenGL Matrix mode to ModelView (used when drawing geometry)
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
+    Matrix4 tmp;
+    tmp.identity();
+  
     //glTranslatef(0, 0, -20);
     //glutSolidSphere(5, 20, 20);
     glColor3f(1, 1, 1);
@@ -339,6 +342,9 @@ void Model3D::OnDraw(){
                 //glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, whiteSpecularMaterial);
                 //glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mShininess);
                 glUseProgramObjectARB(shader_id);
+                glUniformMatrix4fv(glGetUniformLocationARB(shader_id, "ModelView"),1,false, tmp.getFloatPointer());
+                //glutSolidTeapot(1);
+
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, texturaID[0]);
                 
@@ -429,9 +435,9 @@ void Model3D::OnDraw(){
         
     }
     
-    //glUseProgramObjectARB(0);
+    glUseProgramObjectARB(0);
     
-    //glActiveTexture(GL_TEXTURE0);
+    glActiveTexture(GL_TEXTURE0);
     glPopMatrix();
     
     

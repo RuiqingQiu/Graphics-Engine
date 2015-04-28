@@ -1,3 +1,4 @@
+
 //
 //  main.cpp
 //  Graphics Engine
@@ -17,7 +18,7 @@
 #endif
 
 #include "Model3D.h"
-
+#include "SOIL.h"
 #include "Light.h"
 #include <cstdio>
 #include <cstdlib>
@@ -46,70 +47,250 @@ Light* light;
 GLuint vboHandles[2];
 GLuint vaoHandle;
 GLuint programHandle;
+GLhandleARB reflection_shader;
+GLhandleARB skybox_shader;
+
+
+GLhandleARB loadShader(char* filename, unsigned int type)
+{
+    FILE *pfile;
+    GLhandleARB handle;
+    const GLcharARB* files[1];
+    
+    // shader Compilation variable
+    GLint result;				// Compilation code result
+    GLint errorLoglength;
+    char* errorLogText;
+    GLsizei actualErrorLogLength;
+    
+    char buffer[400000];
+    memset(buffer, 0, 400000);
+    
+    // This will raise a warning on MS compiler
+    pfile = fopen(filename, "rb");
+    if (!pfile)
+    {
+        printf("Sorry, can't open file: '%s'.\n", filename);
+        exit(0);
+    }
+    
+    fread(buffer, sizeof(char), 400000, pfile);
+    //printf("%s\n",buffer);
+    
+    
+    fclose(pfile);
+    
+    handle = glCreateShaderObjectARB(type);
+    if (!handle)
+    {
+        //We have failed creating the vertex shader object.
+        printf("Failed creating vertex shader object from file: %s.", filename);
+        exit(0);
+    }
+    
+    files[0] = (const GLcharARB*)buffer;
+    glShaderSourceARB(
+                      handle, //The handle to our shader
+                      1, //The number of files.
+                      files, //An array of const char * data, which represents the source code of theshaders
+                      NULL);
+    
+    glCompileShaderARB(handle);
+    
+    //Compilation checking.
+    glGetObjectParameterivARB(handle, GL_OBJECT_COMPILE_STATUS_ARB, &result);
+    
+    // If an error was detected.
+    if (!result)
+    {
+        //We failed to compile.
+        printf("Shader '%s' failed compilation.\n", filename);
+        
+        //Attempt to get the length of our error log.
+        glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB, &errorLoglength);
+        
+        //Create a buffer to read compilation error message
+        errorLogText = (char*)malloc(sizeof(char)* errorLoglength);
+        
+        //Used to get the final length of the log.
+        glGetInfoLogARB(handle, errorLoglength, &actualErrorLogLength, errorLogText);
+        
+        // Display errors.
+        printf("%s\n", errorLogText);
+        
+        // Free the buffer malloced earlier
+        free(errorLogText);
+    }
+    printf("Shader loaded done\n");
+    return handle;
+}
+
+
 void initialize(void)
 {
-    /*object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.vert",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.frag");*/
+    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.frag");
     
-    /*object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert",
-                         "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");*/
+    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
 
     
-    object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/mace.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/gloss_mace.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
+    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/mace.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/gloss_mace.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
+    
+    object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/woodcube.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_normal.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_gloss.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.frag");
+
+    
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/hammer.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_gloss.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
-    /*object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj",
-     "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG",
-     "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png",
-     "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG",
-     "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG",
-     "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/new.vert",
-     "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/new.frag");*/
     light = new Light();
     light->setLightPosition(0, 10, 0);
+}
+
+vector<const GLchar*> faces;
+
+GLuint loadCubemap(vector<const GLchar*> faces)
+{
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glActiveTexture(GL_TEXTURE0);
+    
+    int width,height;
+    unsigned char* image;
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    //glBindTexture(GL_TEXTURE_2D, textureID);
+    
+    /*
+    textureID = SOIL_load_OGL_texture("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_right.jpg", SOIL_LOAD_AUTO,
+                                         SOIL_CREATE_NEW_ID,
+                                         SOIL_FLAG_INVERT_Y);
+    if (textureID == 0)
+    {
+        cout << "error 2" << endl;
+    }*/
+
+    
+    for(GLuint i = 0; i < faces.size(); i++)
+    {
+        image = SOIL_load_image(faces[i], &width, &height, 0, SOIL_LOAD_RGB);
+        glTexImage2D(
+                     GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
+                     GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image
+                     );
+    }
+//        GLubyte red[3] = {255, 0, 0};
+//        GLubyte green[3] = {0, 255, 0};
+//        GLubyte blue[3] = {0, 0, 255};
+//        GLubyte cyan[3] = {0, 255, 255};
+//        GLubyte magenta[3] = {255, 0, 255};
+//        GLubyte yellow[3] = {255, 255, 0};
+//        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X ,
+//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, red);
+//        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X ,
+//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, green);
+//        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y ,
+//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, blue);
+//        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y ,
+//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, cyan);
+//        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z ,
+//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, magenta);
+//        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z ,
+//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, yellow);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    
+    return textureID;
 }
 
 void displayCallback()
 {
     
-    angle = (angle + 1) % 360;
+    //angle = (angle + 1) % 360;
     //Clear color and depth buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     //Set the OpenGL matrix mode to ModelView
     glMatrixMode(GL_MODELVIEW);
-    light->updateLight();
+    //light->updateLight();
     //Push a matrix save point
     //This will save a copy of the current matrix so that we can
     //make changes to it and 'pop' those changes off later.
+    //glUseProgramObjectARB(reflection_shader);
+
+    
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(0, 0, -5);
-    glRotatef(angle, 0, 1, 0);
-
- 
-    //glutSolidTeapot(5);
+    glTranslatef(0, 0, 5);
+    
     if(object){
         object->x = light->x;
         object->y = light->y;
         object->z = light->z;
         object->OnDraw();
     }
-    glPopMatrix();
-    glFlush();
     
+    //glRotatef(angle, 0, 1, 0);
+    //glutSolidSphere(1, 20, 20);
+    //glUseProgramObjectARB(0);
+    //glutSolidTeapot(1);
+    int size_of_texture_cube = 100;
+    
+    
+    glUseProgramObjectARB(skybox_shader);
+    glBegin(GL_QUADS);
+    glNormal3f(0, 0, -1);
+    glVertex3f( size_of_texture_cube,-size_of_texture_cube,size_of_texture_cube );
+    glVertex3f(-size_of_texture_cube,-size_of_texture_cube,size_of_texture_cube);
+    glVertex3f(-size_of_texture_cube, size_of_texture_cube,size_of_texture_cube); //back up right
+    glVertex3f(size_of_texture_cube,size_of_texture_cube, size_of_texture_cube ); //back up left
+    glEnd();
+    
+    //Front[0]
+    
+
+    glBegin(GL_QUADS);
+    glNormal3f(0, 0, 1);
+    glVertex3f(  -size_of_texture_cube, -size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, -size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube);   //up right
+    glVertex3f(  -size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube); //up left
+    glEnd();
+
+    
+    glBegin(GL_QUADS);
+    glNormal3f(-1, 0, 0);
+    glVertex3f(  -size_of_texture_cube, -size_of_texture_cube, size_of_texture_cube);
+    glVertex3f( -size_of_texture_cube, -size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( -size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube); //up
+    glVertex3f(  -size_of_texture_cube, size_of_texture_cube, size_of_texture_cube); //up
+    glEnd();
+
+    
+    
+    glBegin(GL_QUADS);
+    glNormal3f(1, 0, 0);
+    glVertex3f( size_of_texture_cube, -size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, -size_of_texture_cube, size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube);
+    glEnd();
+    
+    glBegin(GL_QUADS);
+    glNormal3f(0.0, 1.0, 0.0);
+    glVertex3f( -size_of_texture_cube, size_of_texture_cube, size_of_texture_cube); //connect to back up left
+    glVertex3f( -size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube); //connect to front up left
+
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, size_of_texture_cube);
+    glEnd();
+    glPopMatrix();
+    
+     glFlush();
     //Swap the off-screen buffer (the one we just drew to) with the on-screen buffer
     glutSwapBuffers();
-    
+    glUseProgramObjectARB(0);
+
 }
 
 //----------------------------------------------------------------------------
@@ -131,13 +312,16 @@ void reshapeCallback(int w, int h)
     glMatrixMode(GL_PROJECTION);                                     //Set the OpenGL matrix mode to Projection
     glLoadIdentity();                                                //Clear the projection matrix by loading the identity
     gluPerspective(60.0, double(width)/(double)height, 1.0, 1000.0); //Set perspective projection viewing frustum
-    glTranslatef(0, 0, 0);
+    glTranslatef(0, 0, -10);
     glMatrixMode(GL_MODELVIEW);
 
 }
 void processNormalKeys(unsigned char key, int x, int y){
     if (key == 27){
         exit(0);
+    }
+    if(key == 'r'){
+        angle = (angle + 1) % 360;
     }
 }
 
@@ -172,13 +356,46 @@ int main(int argc, char *argv[])
     const GLubyte *vendor = glGetString(GL_VENDOR);
     const GLubyte *version = glGetString(GL_VERSION);
     const GLubyte *glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+    
+    GLhandleARB vertexShaderHandle;
+    GLhandleARB fragmentShaderHandle;
+    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.vert", GL_VERTEX_SHADER);
+    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.frag", GL_FRAGMENT_SHADER);
+    reflection_shader = glCreateProgramObjectARB();
+    glAttachObjectARB(reflection_shader, vertexShaderHandle);
+    glAttachObjectARB(reflection_shader, fragmentShaderHandle);
+    glLinkProgramARB(reflection_shader);
+    
+  
     
     printf("vendor %s\n", vendor);
     printf("renderer %s\n", renderer);
     printf("version %s\n", version);
     printf("glsl %s\n", glslVersion);
 
+    
+    
+    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_left.jpg");
+    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_right.jpg");
+    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_top.jpg");
+    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_base.jpg");
+    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_back.jpg");
+    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_front.jpg");
+    GLuint cubemapTexture = loadCubemap(faces);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+    //glUniform1i(glGetUniformLocationARB(shader_id, "tex"), 0);
+    std::cout << glGetError() << std::endl;
     //Start up the render loop!
+    
+    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/skybox.vert", GL_VERTEX_SHADER);
+    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/skybox.frag", GL_FRAGMENT_SHADER);
+    skybox_shader = glCreateProgramObjectARB();
+    glAttachObjectARB(skybox_shader, vertexShaderHandle);
+    glAttachObjectARB(skybox_shader, fragmentShaderHandle);
+    glLinkProgramARB(skybox_shader);
+    
     glutMainLoop();
     
     return 0;

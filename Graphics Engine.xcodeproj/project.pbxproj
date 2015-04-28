@@ -35,6 +35,15 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AA6AFFBE1AEF54C000EE2A0D /* woodcube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = woodcube.obj; sourceTree = "<group>"; };
+		AA6AFFBF1AEF54C000EE2A0D /* wooden_cube_gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_gloss.png; sourceTree = "<group>"; };
+		AA6AFFC01AEF54C000EE2A0D /* wooden_cube_metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_metallic.png; sourceTree = "<group>"; };
+		AA6AFFC11AEF54C000EE2A0D /* wooden_cube_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_normal.png; sourceTree = "<group>"; };
+		AA6AFFC21AEF54C000EE2A0D /* wooden_cube_tex.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_tex.png; sourceTree = "<group>"; };
+		AA6AFFC41AEF60A700EE2A0D /* reflect.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = reflect.vert; sourceTree = "<group>"; };
+		AA6AFFC51AEF60B500EE2A0D /* reflect.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = reflect.frag; sourceTree = "<group>"; };
+		AA6AFFC61AEF70CE00EE2A0D /* skybox.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = skybox.vert; sourceTree = "<group>"; };
+		AA6AFFC71AEF70DF00EE2A0D /* skybox.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = skybox.frag; sourceTree = "<group>"; };
 		AABCD3B51AE6E86E009328E9 /* Graphics Engine */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Graphics Engine"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AABCD3BF1AE6E87A009328E9 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = System/Library/Frameworks/GLUT.framework; sourceTree = SDKROOT; };
 		AABCD3C11AE6E87D009328E9 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -74,8 +83,6 @@
 		AABCD4021AE6FA9B009328E9 /* h_gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = h_gloss.png; sourceTree = "<group>"; };
 		AABCD4041AE70096009328E9 /* light.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = light.vert; sourceTree = "<group>"; };
 		AABCD4051AE700AE009328E9 /* light.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = light.frag; sourceTree = "<group>"; };
-		AABCD4061AE7255D009328E9 /* new.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = new.vert; sourceTree = "<group>"; };
-		AABCD4071AE72566009328E9 /* new.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = new.frag; sourceTree = "<group>"; };
 		AABCD4081AE82182009328E9 /* Matrix4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix4.cpp; sourceTree = "<group>"; };
 		AABCD4091AE82182009328E9 /* Matrix4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Matrix4.h; sourceTree = "<group>"; };
 		AABCD40A1AE82182009328E9 /* Vector3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Vector3.cpp; sourceTree = "<group>"; };
@@ -98,6 +105,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AA6AFFBD1AEF544A00EE2A0D /* WoodenCube */ = {
+			isa = PBXGroup;
+			children = (
+				AA6AFFBE1AEF54C000EE2A0D /* woodcube.obj */,
+				AA6AFFBF1AEF54C000EE2A0D /* wooden_cube_gloss.png */,
+				AA6AFFC01AEF54C000EE2A0D /* wooden_cube_metallic.png */,
+				AA6AFFC11AEF54C000EE2A0D /* wooden_cube_normal.png */,
+				AA6AFFC21AEF54C000EE2A0D /* wooden_cube_tex.png */,
+			);
+			name = WoodenCube;
+			sourceTree = "<group>";
+		};
 		AABCD3AC1AE6E86E009328E9 = {
 			isa = PBXGroup;
 			children = (
@@ -160,6 +179,7 @@
 		AABCD3F51AE6F8B6009328E9 /* Objects */ = {
 			isa = PBXGroup;
 			children = (
+				AA6AFFBD1AEF544A00EE2A0D /* WoodenCube */,
 				AABCD4031AE6FA9F009328E9 /* Hammer */,
 				AABCD3FD1AE6F95A009328E9 /* Mace */,
 				AABCD3F61AE6F8BB009328E9 /* Hatchet */,
@@ -186,8 +206,10 @@
 				AABCD3F01AE6F31D009328E9 /* basic.vert */,
 				AABCD4041AE70096009328E9 /* light.vert */,
 				AABCD4051AE700AE009328E9 /* light.frag */,
-				AABCD4061AE7255D009328E9 /* new.vert */,
-				AABCD4071AE72566009328E9 /* new.frag */,
+				AA6AFFC41AEF60A700EE2A0D /* reflect.vert */,
+				AA6AFFC51AEF60B500EE2A0D /* reflect.frag */,
+				AA6AFFC61AEF70CE00EE2A0D /* skybox.vert */,
+				AA6AFFC71AEF70DF00EE2A0D /* skybox.frag */,
 			);
 			name = Shader;
 			sourceTree = "<group>";
@@ -399,6 +421,7 @@
 				AABCD3BE1AE6E86E009328E9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
