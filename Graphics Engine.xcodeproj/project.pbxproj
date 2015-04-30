@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA196DF11AF20F0300C66FFD /* ShaderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA196DEF1AF20F0300C66FFD /* ShaderSystem.cpp */; };
+		AA196DF51AF2102E00C66FFD /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA196DF31AF2102E00C66FFD /* Globals.cpp */; };
+		AA196DFB1AF21B0900C66FFD /* SkyboxSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA196DF91AF21B0900C66FFD /* SkyboxSystem.cpp */; };
 		AABCD3C01AE6E87A009328E9 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AABCD3BF1AE6E87A009328E9 /* GLUT.framework */; };
 		AABCD3C21AE6E87D009328E9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AABCD3C11AE6E87D009328E9 /* OpenGL.framework */; };
 		AABCD3C41AE6E8E1009328E9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABCD3C31AE6E8E1009328E9 /* main.cpp */; };
@@ -35,6 +38,17 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		AA196DEF1AF20F0300C66FFD /* ShaderSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderSystem.cpp; sourceTree = "<group>"; };
+		AA196DF01AF20F0300C66FFD /* ShaderSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderSystem.h; sourceTree = "<group>"; };
+		AA196DF21AF20F1200C66FFD /* Definition.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Definition.h; sourceTree = "<group>"; };
+		AA196DF31AF2102E00C66FFD /* Globals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Globals.cpp; sourceTree = "<group>"; };
+		AA196DF41AF2102E00C66FFD /* Globals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Globals.h; sourceTree = "<group>"; };
+		AA196DF71AF2124F00C66FFD /* refract.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = refract.vert; sourceTree = "<group>"; };
+		AA196DF81AF2125900C66FFD /* refract.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = refract.frag; sourceTree = "<group>"; };
+		AA196DF91AF21B0900C66FFD /* SkyboxSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SkyboxSystem.cpp; sourceTree = "<group>"; };
+		AA196DFA1AF21B0900C66FFD /* SkyboxSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyboxSystem.h; sourceTree = "<group>"; };
+		AA196DFC1AF21DFF00C66FFD /* multiple_light.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = multiple_light.vert; sourceTree = "<group>"; };
+		AA196DFD1AF21E2800C66FFD /* multiple_light.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = multiple_light.frag; sourceTree = "<group>"; };
 		AA6AFFBE1AEF54C000EE2A0D /* woodcube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = woodcube.obj; sourceTree = "<group>"; };
 		AA6AFFBF1AEF54C000EE2A0D /* wooden_cube_gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_gloss.png; sourceTree = "<group>"; };
 		AA6AFFC01AEF54C000EE2A0D /* wooden_cube_metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_metallic.png; sourceTree = "<group>"; };
@@ -105,6 +119,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AA196DF61AF2117D00C66FFD /* Math */ = {
+			isa = PBXGroup;
+			children = (
+				AABCD4081AE82182009328E9 /* Matrix4.cpp */,
+				AABCD4091AE82182009328E9 /* Matrix4.h */,
+				AABCD40A1AE82182009328E9 /* Vector3.cpp */,
+				AABCD40B1AE82182009328E9 /* Vector3.h */,
+				AABCD40C1AE82182009328E9 /* Vector4.cpp */,
+				AABCD40D1AE82182009328E9 /* Vector4.h */,
+			);
+			name = Math;
+			sourceTree = "<group>";
+		};
 		AA6AFFBD1AEF544A00EE2A0D /* WoodenCube */ = {
 			isa = PBXGroup;
 			children = (
@@ -120,23 +147,25 @@
 		AABCD3AC1AE6E86E009328E9 = {
 			isa = PBXGroup;
 			children = (
-				AABCD4111AE828A8009328E9 /* glm */,
-				AABCD4081AE82182009328E9 /* Matrix4.cpp */,
-				AABCD4091AE82182009328E9 /* Matrix4.h */,
-				AABCD40A1AE82182009328E9 /* Vector3.cpp */,
-				AABCD40B1AE82182009328E9 /* Vector3.h */,
-				AABCD40C1AE82182009328E9 /* Vector4.cpp */,
-				AABCD40D1AE82182009328E9 /* Vector4.h */,
-				AABCD3F71AE6F8C6009328E9 /* Shader */,
-				AABCD3F51AE6F8B6009328E9 /* Objects */,
-				AABCD3F21AE6F73D009328E9 /* Light.cpp */,
-				AABCD3F31AE6F73D009328E9 /* Light.h */,
-				AABCD3EA1AE6F269009328E9 /* SOIL */,
+				AA196DF91AF21B0900C66FFD /* SkyboxSystem.cpp */,
+				AA196DFA1AF21B0900C66FFD /* SkyboxSystem.h */,
+				AA196DF61AF2117D00C66FFD /* Math */,
+				AA196DF31AF2102E00C66FFD /* Globals.cpp */,
+				AA196DF41AF2102E00C66FFD /* Globals.h */,
+				AABCD3C31AE6E8E1009328E9 /* main.cpp */,
 				AABCD3CB1AE6EBF9009328E9 /* Model3D.cpp */,
 				AABCD3CC1AE6EBF9009328E9 /* Model3D.h */,
+				AA196DF21AF20F1200C66FFD /* Definition.h */,
+				AABCD3F21AE6F73D009328E9 /* Light.cpp */,
+				AABCD3F31AE6F73D009328E9 /* Light.h */,
+				AA196DEF1AF20F0300C66FFD /* ShaderSystem.cpp */,
+				AA196DF01AF20F0300C66FFD /* ShaderSystem.h */,
+				AABCD3F71AE6F8C6009328E9 /* Shader */,
+				AABCD3F51AE6F8B6009328E9 /* Objects */,
+				AABCD3EA1AE6F269009328E9 /* SOIL */,
 				AABCD3C81AE6EB47009328E9 /* tiny_obj_loader.cpp */,
 				AABCD3C91AE6EB47009328E9 /* tiny_obj_loader.h */,
-				AABCD3C31AE6E8E1009328E9 /* main.cpp */,
+				AABCD4111AE828A8009328E9 /* glm */,
 				AABCD3C11AE6E87D009328E9 /* OpenGL.framework */,
 				AABCD3BF1AE6E87A009328E9 /* GLUT.framework */,
 				AABCD3B71AE6E86E009328E9 /* Graphics Engine */,
@@ -210,6 +239,10 @@
 				AA6AFFC51AEF60B500EE2A0D /* reflect.frag */,
 				AA6AFFC61AEF70CE00EE2A0D /* skybox.vert */,
 				AA6AFFC71AEF70DF00EE2A0D /* skybox.frag */,
+				AA196DF71AF2124F00C66FFD /* refract.vert */,
+				AA196DF81AF2125900C66FFD /* refract.frag */,
+				AA196DFC1AF21DFF00C66FFD /* multiple_light.vert */,
+				AA196DFD1AF21E2800C66FFD /* multiple_light.frag */,
 			);
 			name = Shader;
 			sourceTree = "<group>";
@@ -299,9 +332,12 @@
 				AABCD3F41AE6F73D009328E9 /* Light.cpp in Sources */,
 				AABCD40E1AE82182009328E9 /* Matrix4.cpp in Sources */,
 				AABCD3E81AE6EF3B009328E9 /* image_DXT.c in Sources */,
+				AA196DF11AF20F0300C66FFD /* ShaderSystem.cpp in Sources */,
 				AABCD3E91AE6EF3B009328E9 /* image_helper.c in Sources */,
+				AA196DF51AF2102E00C66FFD /* Globals.cpp in Sources */,
 				AABCD40F1AE82182009328E9 /* Vector3.cpp in Sources */,
 				AABCD3CA1AE6EB47009328E9 /* tiny_obj_loader.cpp in Sources */,
+				AA196DFB1AF21B0900C66FFD /* SkyboxSystem.cpp in Sources */,
 				AABCD3E61AE6EF3B009328E9 /* SOIL.c in Sources */,
 				AABCD4101AE82182009328E9 /* Vector4.cpp in Sources */,
 				AABCD3C41AE6E8E1009328E9 /* main.cpp in Sources */,

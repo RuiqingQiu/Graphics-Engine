@@ -36,20 +36,18 @@ using glm::mat4;
 #include "glm/gtc/matrix_transform.hpp"
 using glm::vec3;
 
+#include "Globals.h"
 
 int width = 512;
 int height = 512;
 int angle = 0;
+int angle_z = 0;
 //#include "Matrix4.h"
 Model3D* object;
 Light* light;
 
-GLuint vboHandles[2];
-GLuint vaoHandle;
-GLuint programHandle;
-GLhandleARB reflection_shader;
-GLhandleARB skybox_shader;
 
+void getSkybox(int);
 
 GLhandleARB loadShader(char* filename, unsigned int type)
 {
@@ -130,12 +128,12 @@ void initialize(void)
 {
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.frag");
     
-    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
+    object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG");
 
     
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/mace.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/gloss_mace.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
     
-    object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/woodcube.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_normal.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_gloss.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.frag");
+    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/woodcube.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_normal.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_gloss.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
 
     
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/hammer.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_gloss.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
@@ -174,25 +172,28 @@ GLuint loadCubemap(vector<const GLchar*> faces)
                      GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
                      GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image
                      );
+        //cout << image << endl;
     }
-//        GLubyte red[3] = {255, 0, 0};
-//        GLubyte green[3] = {0, 255, 0};
-//        GLubyte blue[3] = {0, 0, 255};
-//        GLubyte cyan[3] = {0, 255, 255};
-//        GLubyte magenta[3] = {255, 0, 255};
-//        GLubyte yellow[3] = {255, 255, 0};
-//        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X ,
-//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, red);
-//        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X ,
-//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, green);
-//        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y ,
-//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, blue);
-//        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y ,
-//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, cyan);
-//        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z ,
-//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, magenta);
-//        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z ,
-//                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, yellow);
+    /*
+        GLubyte red[3] = {255, 0, 0};
+        GLubyte green[3] = {0, 255, 0};
+        GLubyte blue[3] = {0, 0, 255};
+        GLubyte cyan[3] = {0, 255, 255};
+        GLubyte magenta[3] = {255, 0, 255};
+        GLubyte yellow[3] = {255, 255, 0};
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X ,
+                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, red);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_X ,
+                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, green);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Y ,
+                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, blue);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y ,
+                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, cyan);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z ,
+                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, magenta);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z ,
+                     0,3,1,1,0,GL_RGB,GL_UNSIGNED_BYTE, yellow);*/
+    
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -221,23 +222,13 @@ void displayCallback()
     
     glPushMatrix();
     glLoadIdentity();
-    glTranslatef(0, 0, 5);
-    
-    if(object){
-        object->x = light->x;
-        object->y = light->y;
-        object->z = light->z;
-        object->OnDraw();
-    }
-    
-    //glRotatef(angle, 0, 1, 0);
-    //glutSolidSphere(1, 20, 20);
-    //glUseProgramObjectARB(0);
-    //glutSolidTeapot(1);
+    gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0);
+    glRotated(angle, 0, 1, 0);
+
     int size_of_texture_cube = 100;
     
     
-    glUseProgramObjectARB(skybox_shader);
+    glUseProgramObjectARB(Globals::skybox_shader);
     glBegin(GL_QUADS);
     glNormal3f(0, 0, -1);
     glVertex3f( size_of_texture_cube,-size_of_texture_cube,size_of_texture_cube );
@@ -248,7 +239,7 @@ void displayCallback()
     
     //Front[0]
     
-
+    
     glBegin(GL_QUADS);
     glNormal3f(0, 0, 1);
     glVertex3f(  -size_of_texture_cube, -size_of_texture_cube, -size_of_texture_cube);
@@ -256,7 +247,7 @@ void displayCallback()
     glVertex3f( size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube);   //up right
     glVertex3f(  -size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube); //up left
     glEnd();
-
+    
     
     glBegin(GL_QUADS);
     glNormal3f(-1, 0, 0);
@@ -265,7 +256,7 @@ void displayCallback()
     glVertex3f( -size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube); //up
     glVertex3f(  -size_of_texture_cube, size_of_texture_cube, size_of_texture_cube); //up
     glEnd();
-
+    
     
     
     glBegin(GL_QUADS);
@@ -280,10 +271,19 @@ void displayCallback()
     glNormal3f(0.0, 1.0, 0.0);
     glVertex3f( -size_of_texture_cube, size_of_texture_cube, size_of_texture_cube); //connect to back up left
     glVertex3f( -size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube); //connect to front up left
-
+    
     glVertex3f( size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube);
     glVertex3f( size_of_texture_cube, size_of_texture_cube, size_of_texture_cube);
     glEnd();
+
+    
+    if(object){
+        object->OnDraw();
+    }
+    
+    //glutSolidSphere(1, 20, 20);
+    //glUseProgramObjectARB(0);
+    //glutSolidTeapot(1);
     glPopMatrix();
     
      glFlush();
@@ -323,6 +323,9 @@ void processNormalKeys(unsigned char key, int x, int y){
     if(key == 'r'){
         angle = (angle + 1) % 360;
     }
+    else if(key == 'v'){
+        angle_z = (angle_z + 1) % 360;
+    }
 }
 
 
@@ -356,47 +359,122 @@ int main(int argc, char *argv[])
     const GLubyte *vendor = glGetString(GL_VENDOR);
     const GLubyte *version = glGetString(GL_VERSION);
     const GLubyte *glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
-
     
-    GLhandleARB vertexShaderHandle;
-    GLhandleARB fragmentShaderHandle;
-    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.vert", GL_VERTEX_SHADER);
-    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.frag", GL_FRAGMENT_SHADER);
-    reflection_shader = glCreateProgramObjectARB();
-    glAttachObjectARB(reflection_shader, vertexShaderHandle);
-    glAttachObjectARB(reflection_shader, fragmentShaderHandle);
-    glLinkProgramARB(reflection_shader);
-    
-  
     
     printf("vendor %s\n", vendor);
     printf("renderer %s\n", renderer);
     printf("version %s\n", version);
     printf("glsl %s\n", glslVersion);
+    
+    //Basic light shader
+    GLhandleARB vertexShaderHandle;
+    GLhandleARB fragmentShaderHandle;
+    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/multiple_light.vert", GL_VERTEX_SHADER);
+    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/multiple_light.frag", GL_FRAGMENT_SHADER);
+    Globals::light_shader = glCreateProgramObjectARB();
+    glAttachObjectARB(Globals::light_shader, vertexShaderHandle);
+    glAttachObjectARB(Globals::light_shader, fragmentShaderHandle);
+    glLinkProgramARB(Globals::light_shader);
+    
+    //Reflection shader
+    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.vert", GL_VERTEX_SHADER);
+    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/reflect.frag", GL_FRAGMENT_SHADER);
+    Globals::reflection_shader = glCreateProgramObjectARB();
+    glAttachObjectARB(Globals::reflection_shader, vertexShaderHandle);
+    glAttachObjectARB(Globals::reflection_shader, fragmentShaderHandle);
+    glLinkProgramARB(Globals::reflection_shader);
+    
 
+    //Refraction shader
+    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/refract.vert", GL_VERTEX_SHADER);
+    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/refract.frag", GL_FRAGMENT_SHADER);
+    Globals::refraction_shader = glCreateProgramObjectARB();
+    glAttachObjectARB(Globals::refraction_shader, vertexShaderHandle);
+    glAttachObjectARB(Globals::refraction_shader, fragmentShaderHandle);
+    glLinkProgramARB(Globals::refraction_shader);
     
-    
-    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_left.jpg");
-    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_right.jpg");
-    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_top.jpg");
-    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_base.jpg");
-    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_back.jpg");
-    faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/CSE167/HW6/Skybox_Water222_front.jpg");
+    //Skybox shader
+    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/skybox.vert", GL_VERTEX_SHADER);
+    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/skybox.frag", GL_FRAGMENT_SHADER);
+    Globals::skybox_shader = glCreateProgramObjectARB();
+    glAttachObjectARB(Globals::skybox_shader, vertexShaderHandle);
+    glAttachObjectARB(Globals::skybox_shader, fragmentShaderHandle);
+    glLinkProgramARB(Globals::skybox_shader);
+
+
+    faces.clear();
+    getSkybox(CLOUDS);
     GLuint cubemapTexture = loadCubemap(faces);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
     //glUniform1i(glGetUniformLocationARB(shader_id, "tex"), 0);
     std::cout << glGetError() << std::endl;
     //Start up the render loop!
-    
-    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/skybox.vert", GL_VERTEX_SHADER);
-    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/skybox.frag", GL_FRAGMENT_SHADER);
-    skybox_shader = glCreateProgramObjectARB();
-    glAttachObjectARB(skybox_shader, vertexShaderHandle);
-    glAttachObjectARB(skybox_shader, fragmentShaderHandle);
-    glLinkProgramARB(skybox_shader);
+     
     
     glutMainLoop();
     
     return 0;
+}
+
+void getSkybox(int type){
+    switch(type){
+        case ALIEN:
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/alien/jajalien1_left.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/alien/jajalien1_right.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/alien/jajalien1_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/alien/jajalien1_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/alien/jajalien1_back.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/alien/jajalien1_front.jpg");
+            break;
+            
+        case BLUE_SKY:
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue sky/bluesky_left.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue sky/bluesky_right.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue sky/bluesky_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue sky/bluesky_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue sky/bluesky_back.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue sky/bluesky_front.jpg");
+            break;
+        case BLUE_GREEN:
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue_green/nansen_left.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue_green/nansen_right.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue_green/nansen_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue_green/nansen_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue_green/nansen_back.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/blue_green/nansen_front.jpg");
+            break;
+        case CALM:
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/calm/calm_left.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/calm/calm_right.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/calm/calm_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/calm/calm_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/calm/calm_back.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/calm/calm_front.jpg");
+            break;
+        case CLOUDS:
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/clouds/clouds_left.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/clouds/clouds_right.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/clouds/clouds_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/clouds/clouds_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/clouds/clouds_back.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/clouds/clouds_front.jpg");
+            break;
+        case EMERALD:
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emerald/emerald_left.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emerald/emerald_right.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emerald/emerald_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emerald/emerald_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emerald/emerald_back.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emerald/emerald_front.jpg");
+            break;
+        case EMERALD_FOG:
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emeraldfog/emeraldfog_left.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emeraldfog/emeraldfog_right.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emeraldfog/emeraldfog_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emeraldfog/emeraldfog_top.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emeraldfog/emeraldfog_back.jpg");
+            faces.push_back("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Skyboxes/emeraldfog/emeraldfog_front.jpg");
+            break;
+    }
 }

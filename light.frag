@@ -16,7 +16,7 @@ float maxDist = 150.0;
 float minDist = 10.0;
 vec4 color = vec4(0.5, 0.5, 0.5, 1.0);
 
-/*
+
 void phongModel(vec4 position, vec3 normal, out vec3 ambAndDiff, out vec3 spec) {
     vec3 Kd = vec3(0.64, 0.64, 0.64);
     vec3 Ld = vec3(1.0, 1.0, 1.0);
@@ -39,8 +39,8 @@ void phongModel(vec4 position, vec3 normal, out vec3 ambAndDiff, out vec3 spec) 
         spec = Ls * Ks * pow( max( dot(r,v), 0.0 ), Shininess );
     ambAndDiff = ambient + diffuse;
 }
-*/
 
+/*
 vec3 phongModel(vec3 normal, vec3 diffR){
     vec3 Kd = vec3(0.64, 0.64, 0.64);
     vec3 Ld = vec3(1.0, 1.0, 1.0);
@@ -66,7 +66,7 @@ vec3 phongModel(vec3 normal, vec3 diffR){
     
     return ambient + diffuse + spec;
 }
-
+*/
 void main() {
     vec4 normal = 2.0 * texture2D(norm, TexCoords) - 1.0;
     vec4 texColor = texture2D(tex, TexCoords);

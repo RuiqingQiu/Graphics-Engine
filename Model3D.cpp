@@ -7,6 +7,7 @@
 //
 #include "SOIL.h"
 #include "Model3D.h"
+#include "Globals.h"
 static float t = 0.0;
 Model3D::Model3D()
 {
@@ -23,12 +24,7 @@ void Model3D::setGlossMap(string pathname){
 void Model3D::setMetallicMap(string pathname){
     metallic_map = pathname;
 }
-void Model3D::setVertexShader(string vertex){
-    vertex_shader = vertex;
-}
-void Model3D::setFragmentShader(string fragment){
-    fragment_shader = fragment;
-}
+
 
 
 GLhandleARB loadShader1(char* filename, unsigned int type)
@@ -106,13 +102,13 @@ GLhandleARB loadShader1(char* filename, unsigned int type)
 }
 
 
-Model3D::Model3D(string filename, string texture, string normal, string gloss, string metallic, string vertex, string fragment){
+Model3D::Model3D(string filename, string texture, string normal, string gloss, string metallic){
+    shader_type = REGULAR_SHADER;
+    
     setTextureMap(texture);
     setNormalMap(normal);
     setGlossMap(gloss);
     setMetallicMap(metallic);
-    setVertexShader(vertex);
-    setFragmentShader(fragment);
     
     std::string inputfile = filename;
     
@@ -191,26 +187,6 @@ Model3D::Model3D(string filename, string texture, string normal, string gloss, s
         }
     }
     
-    
-    GLhandleARB vertexShaderHandle;
-    GLhandleARB fragmentShaderHandle;
-    char *v_tmp = new char[vertex_shader.length() + 1];
-    strcpy(v_tmp, vertex_shader.c_str());
-    char *f_tmp = new char[fragment_shader.length() + 1];
-    strcpy(f_tmp, fragment_shader.c_str());
-    cout << v_tmp << endl;
-    cout << f_tmp << endl;
-    vertexShaderHandle = loadShader1(v_tmp, GL_VERTEX_SHADER);
-    fragmentShaderHandle = loadShader1(f_tmp, GL_FRAGMENT_SHADER);
-    shader_id = glCreateProgramObjectARB();
-    
-    glAttachObjectARB(shader_id, vertexShaderHandle);
-    glAttachObjectARB(shader_id, fragmentShaderHandle);
-    glLinkProgramARB(shader_id);
-    
-    //glUseProgramObjectARB(shader_id);
-    
-    
     glGenTextures(3, texturaID);
     int width, height;
     //unsigned char* image;
@@ -264,71 +240,29 @@ Model3D::Model3D(string filename, string texture, string normal, string gloss, s
     {
         cout << "error 3" << endl;
     }
-    
-    
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texturaID[0]);
-    
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texturaID[1]);
-    
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, texturaID[2]);
-    
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, texturaID[3]);
-    glUniform1i(glGetUniformLocationARB(shader_id, "tex"), 0);
-    glUniform1i(glGetUniformLocationARB(shader_id, "norm"), 1);
-    glUniform1i(glGetUniformLocationARB(shader_id, "gloss"), 2);
-    glUniform1i(glGetUniformLocationARB(shader_id, "metallic"), 3);
 }
 
 
 Model3D::~Model3D()
 {
 }
-/*
- typedef struct {
- std::vector<float> positions;
- std::vector<float> normals;
- std::vector<float> texcoords;
- std::vector<unsigned int> indices;
- std::vector<int> material_ids; // per-mesh material ID
- } mesh_t;
- typedef struct {
- std::string name;
- mesh_t mesh;
- } shape_t;
- typedef struct {
- std::string name;
- float ambient[3];
- float diffuse[3];
- float specular[3];
- float transmittance[3];
- float emission[3];
- float shininess;
- float ior;      // index of refraction
- float dissolve; // 1 == opaque; 0 == fully transparent
- // illumination model (see http://www.fileformat.info/format/material/)
- int illum;
- std::string ambient_texname;
- std::string diffuse_texname;
- std::string specular_texname;
- std::string normal_texname;
- std::map<std::string, std::string> unknown_parameter;
- } material_t;
- */
+
 void Model3D::OnDraw(){
     t += 1.0;
     //Set the OpenGL Matrix mode to ModelView (used when drawing geometry)
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
-    Matrix4 tmp;
-    tmp.identity();
-  
+    Matrix4 r;
+    r.makeRotateY(t);
+    Matrix4 p;
+    //glTranslatef(0, 0, -30);
+    //glRotatef(angle, 0, 1, 0);
+    p.makeTranslate(0, 0, -30);
+    Matrix4 tmp = p * r;
+    tmp.transpose();
+    glMultMatrixd(tmp.getPointer());
     //glTranslatef(0, 0, -20);
     //glutSolidSphere(5, 20, 20);
-    glColor3f(1, 1, 1);
     for (size_t i = 0; i < shapes.size(); i++) {
         
         for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
@@ -341,10 +275,17 @@ void Model3D::OnDraw(){
                 //material goes here
                 //glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, whiteSpecularMaterial);
                 //glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mShininess);
-                glUseProgramObjectARB(shader_id);
-                glUniformMatrix4fv(glGetUniformLocationARB(shader_id, "ModelView"),1,false, tmp.getFloatPointer());
-                //glutSolidTeapot(1);
+                //glUseProgramObjectARB(Globals::reflection_shader);
+                //GLhandleARB shader = Globals::refraction_shader;
+                //GLhandleARB shader = Globals::light_shader;
+                GLhandleARB shader = Globals::reflection_shader;
 
+                
+                glUseProgramObjectARB(shader);
+
+                glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
+                
+                //Passing four maps
                 glActiveTexture(GL_TEXTURE0);
                 glBindTexture(GL_TEXTURE_2D, texturaID[0]);
                 
@@ -358,16 +299,16 @@ void Model3D::OnDraw(){
                 glActiveTexture(GL_TEXTURE3);
                 glBindTexture(GL_TEXTURE_2D, texturaID[3]);
                 
-                glUniform1i(glGetUniformLocationARB(shader_id, "tex"), 0);
-                glUniform1i(glGetUniformLocationARB(shader_id, "norm"), 1);
-                glUniform1i(glGetUniformLocationARB(shader_id, "gloss"), 2);
-                glUniform1i(glGetUniformLocationARB(shader_id, "metallic"), 3);
+                glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
+                glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
+                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
+                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
                 
                 float value [4] = {float(shapes[i].mesh.tangent[f].x),
                                    float(shapes[i].mesh.tangent[f].y),
                                    float(shapes[i].mesh.tangent[f].z),
                                    float(shapes[i].mesh.tangent[f].w)};
-                glUniform4fv(glGetUniformLocationARB(shader_id, "VertexTangent"), 1, value);
+                glUniform4fv(glGetUniformLocationARB(shader, "VertexTangent"), 1, value);
                 // Make sure no bytes are padded:
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
                 
@@ -434,7 +375,6 @@ void Model3D::OnDraw(){
         }
         
     }
-    
     glUseProgramObjectARB(0);
     
     glActiveTexture(GL_TEXTURE0);
