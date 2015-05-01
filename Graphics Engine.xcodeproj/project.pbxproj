@@ -10,6 +10,7 @@
 		AA196DF11AF20F0300C66FFD /* ShaderSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA196DEF1AF20F0300C66FFD /* ShaderSystem.cpp */; };
 		AA196DF51AF2102E00C66FFD /* Globals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA196DF31AF2102E00C66FFD /* Globals.cpp */; };
 		AA196DFB1AF21B0900C66FFD /* SkyboxSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA196DF91AF21B0900C66FFD /* SkyboxSystem.cpp */; };
+		AA196E021AF3072200C66FFD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA196E011AF3072200C66FFD /* Cocoa.framework */; };
 		AABCD3C01AE6E87A009328E9 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AABCD3BF1AE6E87A009328E9 /* GLUT.framework */; };
 		AABCD3C21AE6E87D009328E9 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AABCD3C11AE6E87D009328E9 /* OpenGL.framework */; };
 		AABCD3C41AE6E8E1009328E9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AABCD3C31AE6E8E1009328E9 /* main.cpp */; };
@@ -49,6 +50,9 @@
 		AA196DFA1AF21B0900C66FFD /* SkyboxSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SkyboxSystem.h; sourceTree = "<group>"; };
 		AA196DFC1AF21DFF00C66FFD /* multiple_light.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = multiple_light.vert; sourceTree = "<group>"; };
 		AA196DFD1AF21E2800C66FFD /* multiple_light.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = multiple_light.frag; sourceTree = "<group>"; };
+		AA196DFF1AF221CF00C66FFD /* edge.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = edge.vert; sourceTree = "<group>"; };
+		AA196E001AF2223100C66FFD /* edge.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = edge.frag; sourceTree = "<group>"; };
+		AA196E011AF3072200C66FFD /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		AA6AFFBE1AEF54C000EE2A0D /* woodcube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = woodcube.obj; sourceTree = "<group>"; };
 		AA6AFFBF1AEF54C000EE2A0D /* wooden_cube_gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_gloss.png; sourceTree = "<group>"; };
 		AA6AFFC01AEF54C000EE2A0D /* wooden_cube_metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_metallic.png; sourceTree = "<group>"; };
@@ -111,6 +115,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA196E021AF3072200C66FFD /* Cocoa.framework in Frameworks */,
 				AABCD3C21AE6E87D009328E9 /* OpenGL.framework in Frameworks */,
 				AABCD3C01AE6E87A009328E9 /* GLUT.framework in Frameworks */,
 			);
@@ -147,6 +152,7 @@
 		AABCD3AC1AE6E86E009328E9 = {
 			isa = PBXGroup;
 			children = (
+				AA196E011AF3072200C66FFD /* Cocoa.framework */,
 				AA196DF91AF21B0900C66FFD /* SkyboxSystem.cpp */,
 				AA196DFA1AF21B0900C66FFD /* SkyboxSystem.h */,
 				AA196DF61AF2117D00C66FFD /* Math */,
@@ -243,6 +249,8 @@
 				AA196DF81AF2125900C66FFD /* refract.frag */,
 				AA196DFC1AF21DFF00C66FFD /* multiple_light.vert */,
 				AA196DFD1AF21E2800C66FFD /* multiple_light.frag */,
+				AA196DFF1AF221CF00C66FFD /* edge.vert */,
+				AA196E001AF2223100C66FFD /* edge.frag */,
 			);
 			name = Shader;
 			sourceTree = "<group>";
