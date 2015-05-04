@@ -1,12 +1,11 @@
 varying vec4 Position;
 varying vec3 Normal;
-varying vec2 TexCoords;
 
 uniform sampler2D RenderTex;
 uniform int pass;
 
 //float EdgeThreshold;
-//const vec3 lum = vec3(0.2126, 0.7152, 0.0722);
+const vec3 lum = vec3(0.2126, 0.7152, 0.0722);
 //
 vec3 phongModel(vec4 position, vec3 normal){
     vec3 Kd = vec3(0.64, 0.64, 0.64);
@@ -30,88 +29,7 @@ vec3 phongModel(vec4 position, vec3 normal){
         spec = Ls * Ks * pow( max( dot(r,v), 0.0 ), Shininess );
     return ambient + diffuse + spec;
 }
-//
-//float luminace(vec3 color){
-//    return dot(lum, color);
-//}
-//
-//vec4 pass1()
-//{
-//    return vec4(phongModel(Position, Normal),1.0);
-//}
-//
-//
-//vec4 pass2()
-//{
-//    vec2 pix = vec2(gl_FragCoord.xy);
-//    vec2 tmp = pix - vec2(-1,1);
-//    /*
-//    float s00 = luminance(texelFetchOffset(RenderTex, pix, 0, ivec2(-1,1)).rgb);
-//    float s10 = luminance(texelFetchOffset(RenderTex, pix, 0, ivec2(-1,0)).rgb);
-//    float s20 = luminance(texelFetchOffset(RenderTex, pix, 0, ivec2(-1,-1)).rgb);
-//    float s01 = luminance(texelFetchOffset(RenderTex, pix, 0, ivec2(0,1)).rgb);
-//    float s21 = luminance(texelFetchOffset(RenderTex, pix, 0, ivec2(0,-1)).rgb);
-//    float s02 = luminance(texelFetchOffset(RenderTex, pix, 0, ivec2(1,1)).rgb);
-//    float s12 = luminance(texelFetchOffset(RenderTex, pix, 0, ivec2(1,0)).rgb);
-//    float s22 = luminance(texelFetchOffset(RenderTex, pix, 0, ivec2(1,-1)).rgb);*/
-//    tmp = normalize(tmp);
-//    float s00 = dot(lum, texture2D(RenderTex,tmp.xy).rgb);
-//    
-//    tmp = normalize(tmp);
-//    tmp = pix - vec2(-1,0);
-//    float s10 = dot(lum, texture2D(RenderTex,tmp.xy).rgb);
-//    
-//    tmp = normalize(tmp);
-//    tmp = pix - vec2(-1,-1);
-//    float s20 = dot(lum, texture2D(RenderTex,tmp.xy).rgb);
-//    
-//    tmp = normalize(tmp);
-//    tmp = pix - vec2(0, 1);
-//    float s01 = dot(lum, texture2D(RenderTex,tmp.xy).rgb);
-//    
-//    tmp = normalize(tmp);
-//    tmp = pix - vec2(0, -1);
-//    float s21 = dot(lum, texture2D(RenderTex,tmp.xy).rgb);
-//    
-//    tmp = normalize(tmp);
-//    tmp = pix - vec2(1, 1);
-//    float s02 = dot(lum, texture2D(RenderTex,tmp.xy).rgb);
-//    
-//    tmp = normalize(tmp);
-//    tmp = pix - vec2(1, 0);
-//    float s12 = dot(lum, texture2D(RenderTex,tmp.xy).rgb);
-//    
-//    tmp = normalize(tmp);
-//    tmp = pix - vec2(1, -1);
-//    float s22 = dot(lum, texture2D(RenderTex,tmp.xy).rgb);
-//    
-//    float sx = s00 + 2.0 * s10 + s20 - (s02 + 2.0 * s12 + s22);
-//    float sy = s00 + 2.0 * s01 + s02 - (s20 + 2.0 * s21 + s22);
-//    
-//    float g = sx * sx + sy * sy;
-//    
-//    //tmp = normalize(tmp);
-//    return texture2D(RenderTex, Position.xy);
-//    //return texture2D(RenderTex, Position.xy);
-//    //return vec4(normalize(vec3(g,g,g)),1);
-//    EdgeThreshold = 0.1;
-//    //return texture2D(RenderTex, Position.xy);
-//    if( g > EdgeThreshold )
-//        return vec4(1.0, 1.0, 1.0, 1.0);
-//    else
-//        return vec4(0.0,0.0,0.0,1.0);
-//}
-//
-//void main(){
-//    if(pass == 1){
-//        gl_FragColor = pass1();
-//        //gl_FragColor = vec4(0, 1, 0, 1);
-//    }
-//    else{
-//        //gl_FragColor = vec4(0, 1, 0, 1);
-//        gl_FragColor = pass2();
-//    }
-//}
+
 float threshold(in float thr1, in float thr2 , in float val) {
     if (val < thr1) {return 0.0;}
     if (val > thr2) {return 1.0;}
@@ -120,6 +38,7 @@ float threshold(in float thr1, in float thr2 , in float val) {
 
 // averaged pixel intensity from 3 color channels
 float avg_intensity(in vec4 pix) {
+    //return dot(lum, pix.rgb);
     return (pix.r + pix.g + pix.b)/3.;
 }
 
@@ -143,6 +62,11 @@ float IsEdge(in vec2 coords){
                                              float(j)*dytex));
         }
     }
+    //float sx = pix[0] + 2.0 * pix[3] + pix[6] - (pix[2] + 2.0 * pix[4] + pix[8]);
+    //float sy = pix[0] + 2.0 * pix[1] + pix[2] - (pix[6] + 2.0 * pix[7] + pix[8]);
+    
+    //float g = sx * sx + sy * sy;
+    //return threshold(0.4, 0.4, g);
     
     // average color differences around neighboring pixels
     delta = (abs(pix[1]-pix[7])+
@@ -162,7 +86,6 @@ void main()
         gl_FragColor = vec4(phongModel(Position, Normal),1.0);
     }
     else{
-        
         vec4 color = vec4(0.0,0.0,0.0,1.0);
         vec2 pix = vec2(gl_FragCoord.x/width, gl_FragCoord.y /height);
         color.g = IsEdge(pix);

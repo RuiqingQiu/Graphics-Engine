@@ -24,6 +24,7 @@ public:
     std::vector<tinyobj::shape_t> shapes;
     std::vector<tinyobj::material_t> materials;
     int shader_type;
+    int pass;
     GLuint texturaID[4];
     
     string texture_map;

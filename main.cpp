@@ -241,10 +241,10 @@ void initialize(void)
 {
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.frag");
     
-    object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG");
+    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG");
     
     
-    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/mace.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/gloss_mace.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
+    object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/mace.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/gloss_mace.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/metallic.png");
     
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/woodcube.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_normal.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_gloss.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
     
@@ -265,12 +265,12 @@ void prepare()
     
     glViewport(0,0, width, height);
     
-    glClearColor(0.2,0.2,1,0);
+    glClearColor(1.0,1.0,1,0);
     glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60.0, double(width)/(double)height, 1.0, 1000.0);
+    gluPerspective(60.0, double(width)/(double)height, 0.1, 1000.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
@@ -280,13 +280,17 @@ void prepare()
     
     glUseProgramObjectARB(Globals::edge_shader);
     glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 1);
-    
-    glTranslatef(0,0,-10);
+
+    glTranslatef(0,0,-3);
     glRotatef(angle, 0, 1, 0);
     //glColor3f(1, 0, 0);
-    glutSolidTeapot(1);
-
     //glutSolidTeapot(1);
+    //glutSolidTeapot(1);
+    object->pass = 1;
+    if(object){
+        object->OnDraw();
+    }
+
     //glutSolidTeapot(0.75);
     glUseProgramObjectARB(0);
 }
@@ -303,33 +307,36 @@ void final()
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60.0, double(width)/(double)height, 1.0, 1000.0);
+    gluPerspective(60.0, double(width)/(double)height, 0.1, 1000.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(0,0,-10);
+    glTranslatef(0,0,-3);
     glRotatef(angle, 0, 1, 0);
     
     //glActiveTexture(GL_TEXTURE0);
     //glBindTexture(GL_TEXTURE_2D, texture);
     
-    //glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, color);
     // Draw a textured quad
-    //    glBegin(GL_QUADS);
-    //    glTexCoord2f(0, 0); glVertex3f(0, 0, 0);
-    //    glTexCoord2f(0, 1); glVertex3f(0, 1, 0);
-    //    glTexCoord2f(1, 1); glVertex3f(1, 1, 0);
-    //    glTexCoord2f(1, 0); glVertex3f(1, 0, 0);
-    //    glEnd();
-    //
-    //
-    //    glDisable(GL_TEXTURE_2D);
+        glBegin(GL_QUADS);
+        glTexCoord2f(0, 0); glVertex3f(1, 1, 0);
+        glTexCoord2f(0, 1); glVertex3f(1, 2, 0);
+        glTexCoord2f(1, 1); glVertex3f(2, 2, 0);
+        glTexCoord2f(1, 0); glVertex3f(2, 1, 0);
+        glEnd();
+    
+    
+    glDisable(GL_TEXTURE_2D);
     
     glUseProgramObjectARB(Globals::edge_shader);
     glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 2);
     glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "RenderTex"), 0);
-    glutSolidTeapot(1);
-
+    //glutSolidTeapot(1);
+    object->pass = 2;
+    if(object){
+        object->OnDraw();
+    }
     glUseProgramObjectARB(0);
 }
 
@@ -415,9 +422,9 @@ void displayCallback()
      glEnd();
      
      
-     if(object){
-         object->OnDraw();
-     }
+//     if(object){
+//         object->OnDraw();
+//     }
     
     //glutSolidSphere(1, 20, 20);
     //glUseProgramObjectARB(0);
@@ -450,8 +457,8 @@ void reshapeCallback(int w, int h)
     glViewport(0, 0, w, h);                                          //Set new viewport size
     glMatrixMode(GL_PROJECTION);                                     //Set the OpenGL matrix mode to Projection
     glLoadIdentity();                                                //Clear the projection matrix by loading the identity
-    gluPerspective(60.0, double(width)/(double)height, 1.0, 1000.0); //Set perspective projection viewing frustum
-    glTranslatef(0, 0, -10);
+    gluPerspective(60.0, double(width)/(double)height, 0.0, 1000.0); //Set perspective projection viewing frustum
+    //glTranslatef(0, 0, -10);
     glMatrixMode(GL_MODELVIEW);
     
 }
