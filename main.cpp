@@ -242,10 +242,14 @@ void initialize(void)
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/basic.frag");
     
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Hatchet.obj","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Albedo.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Normal_Clrear.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Gloss.PNG","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/Metalness.PNG");
+    object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlackCube/blackcube.obj","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlackCube/tex.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlackCube/normal.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlackCube/gloss.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlackCube/metallic.png");
     
+    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/SmallCannon/cannon.obj","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/SmallCannon/tex.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/SmallCannon/normal2.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/SmallCannon/gloss.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/SmallCannon/metall.png");
     
-    object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/mace.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/gloss_mace.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/metallic.png");
+    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/mace.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/gloss_mace.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/metallic.png");
     
+    //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlockyGun/gat.obj","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlockyGun/gun_gat.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlockyGun/gun_normal.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlockyGun/gun_gloss.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/BlockyGun/gun_metallic.png");
+
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/woodcube.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_normal.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_gloss.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/wooden_cube_metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
     
     
@@ -331,7 +335,7 @@ void final()
     
     glUseProgramObjectARB(Globals::edge_shader);
     glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 2);
-    glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "RenderTex"), 0);
+    //glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "RenderTex"), 0);
     //glutSolidTeapot(1);
     object->pass = 2;
     if(object){
@@ -518,8 +522,10 @@ int main(int argc, char *argv[])
     //Basic light shader
     GLhandleARB vertexShaderHandle;
     GLhandleARB fragmentShaderHandle;
-    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/multiple_light.vert", GL_VERTEX_SHADER);
-    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/multiple_light.frag", GL_FRAGMENT_SHADER);
+    //vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/multiple_light.vert", GL_VERTEX_SHADER);
+    //fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/multiple_light.frag", GL_FRAGMENT_SHADER);
+    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert", GL_VERTEX_SHADER);
+    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag", GL_FRAGMENT_SHADER);
     Globals::light_shader = glCreateProgramObjectARB();
     glAttachObjectARB(Globals::light_shader, vertexShaderHandle);
     glAttachObjectARB(Globals::light_shader, fragmentShaderHandle);

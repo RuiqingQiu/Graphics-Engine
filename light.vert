@@ -1,3 +1,6 @@
+attribute float height;
+attribute vec4 VertexTangent;
+
 varying vec4 Position;
 varying vec3 Normal;
 varying vec2 TexCoords;
@@ -6,7 +9,9 @@ varying vec3 Tangent;
 varying vec3 LightDir;
 varying vec3 ViewDir;
 
-uniform vec4 VertexTangent;
+varying float height_pass;
+uniform mat4 ModelView;
+
 
 void main()
 {
@@ -14,6 +19,7 @@ void main()
     Normal = normalize( gl_NormalMatrix * gl_Normal);
     Position = gl_ModelViewMatrix * gl_Vertex;
   
+    
     Tangent = normalize(gl_NormalMatrix * vec3(VertexTangent));
     vec3 binormal = normalize(cross(Normal, Tangent)) * VertexTangent.w;
     mat3 toObjectLocal = mat3(
@@ -23,6 +29,10 @@ void main()
     vec4 LightPosition = vec4(0.0, 10.0, 20.0, 1.0);
     LightDir = normalize(toObjectLocal * (LightPosition.xyz - Position.xyz));
     ViewDir = toObjectLocal * normalize(-Position.xyz);
-  
+    //Tangent = vec3(ModelView * VertexTangent);
+    
+    
+    height_pass = height;
+    
     gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

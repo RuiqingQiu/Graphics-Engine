@@ -253,8 +253,8 @@ void Model3D::OnDraw(){
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     Matrix4 r;
-    //r.makeRotateY(t);
-    r.makeRotateY(0);
+    r.makeRotateY(t);
+    //r.makeRotateY(0);
     Matrix4 p;
     //glTranslatef(0, 0, -30);
     //glRotatef(angle, 0, 1, 0);
@@ -270,14 +270,18 @@ void Model3D::OnDraw(){
 //    GLhandleARB shader = Globals::edge_shader;
 //
 //    
-//    glUseProgramObjectARB(shader);
-//    if(pass == 1){
-//        glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 1);
-//    }
-//    else{
-//        glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 2);
-//        glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "RenderTex"), 0);
-//    }
+    if(pass == 1){
+        glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 1);
+    }
+    else if(pass == 2){
+        GLhandleARB shader = Globals::edge_shader;
+        glUseProgramObjectARB(shader);
+        glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 2);
+        glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "RenderTex"), 0);
+    }
+    else{
+        
+    }
     for (size_t i = 0; i < shapes.size(); i++) {
         
         for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
@@ -285,38 +289,43 @@ void Model3D::OnDraw(){
             int i2 = shapes[i].mesh.indices[3 * f + 1];
             int i3 = shapes[i].mesh.indices[3 * f + 2];
             int m1 = shapes[i].mesh.material_ids[f];
-            
-            if (isTextured){
                 //material goes here
                 //glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, whiteSpecularMaterial);
                 //glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mShininess);
 //                //glUseProgramObjectARB(Globals::reflection_shader);
-//                glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
+
                 
                 //Passing four maps
-//                glActiveTexture(GL_TEXTURE0);
-//                glBindTexture(GL_TEXTURE_2D, texturaID[0]);
-//                
-//                glActiveTexture(GL_TEXTURE1);
-//                glBindTexture(GL_TEXTURE_2D, texturaID[1]);
-//                
-//                
-//                glActiveTexture(GL_TEXTURE2);
-//                glBindTexture(GL_TEXTURE_2D, texturaID[2]);
-//                
-//                glActiveTexture(GL_TEXTURE3);
-//                glBindTexture(GL_TEXTURE_2D, texturaID[3]);
-//                
-//                glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
-//                glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
-//                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
-//                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
-//                
-//                float value [4] = {float(shapes[i].mesh.tangent[f].x),
-//                                   float(shapes[i].mesh.tangent[f].y),
-//                                   float(shapes[i].mesh.tangent[f].z),
-//                                   float(shapes[i].mesh.tangent[f].w)};
+                
+                GLhandleARB shader = Globals::light_shader;
+                glUseProgramObjectARB(shader);
+
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, texturaID[0]);
+                
+                glActiveTexture(GL_TEXTURE1);
+                glBindTexture(GL_TEXTURE_2D, texturaID[1]);
+                
+                
+                glActiveTexture(GL_TEXTURE2);
+                glBindTexture(GL_TEXTURE_2D, texturaID[2]);
+                
+                glActiveTexture(GL_TEXTURE3);
+                glBindTexture(GL_TEXTURE_2D, texturaID[3]);
+                GLuint vt = glGetAttribLocationARB(shader,"VertexTangent");
+                GLuint h = glGetAttribLocationARB(shader,"height");
+                glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
+                glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
+                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
+                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
+                
+                glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
+//                float value [4] = {float(shapes[i].mesh.tangent[i1].x),
+//                                   float(shapes[i].mesh.tangent[i1].y),
+//                                   float(shapes[i].mesh.tangent[i1].z),
+//                                   float(shapes[i].mesh.tangent[i1].w)};
 //                glUniform4fv(glGetUniformLocationARB(shader, "VertexTangent"), 1, value);
+            
                 // Make sure no bytes are padded:
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
                 
@@ -332,7 +341,6 @@ void Model3D::OnDraw(){
                 //glMaterialfv(GL_FRONT, GL_DIFFUSE, materials[m1].diffuse);
                 //glMaterialfv(GL_FRONT, GL_SPECULAR, materials[m1].specular);
                 //glMaterialfv(GL_FRONT, GL_SHININESS, &materials[m1].shininess);
-            }
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //THIS LINE OF CODE MUST BE AFTER THE TEXTURE LOADING CODE
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -349,6 +357,14 @@ void Model3D::OnDraw(){
                        shapes[i].mesh.normals[3 * i1 + 1],
                        shapes[i].mesh.normals[3 * i1 + 2]
                        );
+            
+            float value [4] = {float(shapes[i].mesh.tangent[i1].x),
+                float(shapes[i].mesh.tangent[i1].y),
+                float(shapes[i].mesh.tangent[i1].z),
+                float(shapes[i].mesh.tangent[i1].w)};
+            //glVertexAttrib3fv(glGetUniformLocationARB(shader, "height"), value);
+            glVertexAttrib3fvARB(vt, value);
+            //glVertexAttrib1fARB(h, 1.0);
             glVertex3f(shapes[i].mesh.positions[3 * i1 + 0], shapes[i].mesh.positions[3 * i1 + 1], shapes[i].mesh.positions[3 * i1 + 2]);
             
             if (isTextured){
@@ -360,6 +376,14 @@ void Model3D::OnDraw(){
                        shapes[i].mesh.normals[3 * i2 + 1],
                        shapes[i].mesh.normals[3 * i2 + 2]
                        );
+            
+            
+            float value1 [4] = {float(shapes[i].mesh.tangent[i2].x),
+                float(shapes[i].mesh.tangent[i2].y),
+                float(shapes[i].mesh.tangent[i2].z),
+                float(shapes[i].mesh.tangent[i2].w)};
+            glVertexAttrib3fvARB(vt, value1);
+            //glVertexAttrib1fARB(h, 0.5);
             glVertex3f(shapes[i].mesh.positions[3 * i2 + 0], shapes[i].mesh.positions[3 * i2 + 1], shapes[i].mesh.positions[3 * i2 + 2]);
             
             if (isTextured){
@@ -371,6 +395,14 @@ void Model3D::OnDraw(){
                        shapes[i].mesh.normals[3 * i3 + 1],
                        shapes[i].mesh.normals[3 * i3 + 2]
                        );
+            
+            
+            float value2 [4] = {float(shapes[i].mesh.tangent[i3].x),
+                float(shapes[i].mesh.tangent[i3].y),
+                float(shapes[i].mesh.tangent[i3].z),
+                float(shapes[i].mesh.tangent[i3].w)};
+            glVertexAttrib3fvARB(vt, value2);
+            //glVertexAttrib1fARB(h, 0.0);
             glVertex3f(shapes[i].mesh.positions[3 * i3 + 0], shapes[i].mesh.positions[3 * i3 + 1], shapes[i].mesh.positions[3 * i3 + 2]);
             
             glEnd();

@@ -53,6 +53,21 @@
 		AA196DFF1AF221CF00C66FFD /* edge.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = edge.vert; sourceTree = "<group>"; };
 		AA196E001AF2223100C66FFD /* edge.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = edge.frag; sourceTree = "<group>"; };
 		AA196E011AF3072200C66FFD /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		AA4148A41AF73BCC00FEEF8C /* gat.obj */ = {isa = PBXFileReference; lastKnownFileType = text; name = gat.obj; path = BlockyGun/gat.obj; sourceTree = "<group>"; };
+		AA4148A51AF73BCC00FEEF8C /* gun_gat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gun_gat.png; path = BlockyGun/gun_gat.png; sourceTree = "<group>"; };
+		AA4148A61AF73BCC00FEEF8C /* gun_gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gun_gloss.png; path = BlockyGun/gun_gloss.png; sourceTree = "<group>"; };
+		AA4148A71AF73BCC00FEEF8C /* gun_metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gun_metallic.png; path = BlockyGun/gun_metallic.png; sourceTree = "<group>"; };
+		AA4148A81AF73BCC00FEEF8C /* gun_normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gun_normal.png; path = BlockyGun/gun_normal.png; sourceTree = "<group>"; };
+		AA4148AA1AF75EED00FEEF8C /* blackcube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; name = blackcube.obj; path = BlackCube/blackcube.obj; sourceTree = "<group>"; };
+		AA4148AB1AF75EED00FEEF8C /* gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gloss.png; path = BlackCube/gloss.png; sourceTree = "<group>"; };
+		AA4148AC1AF75EED00FEEF8C /* metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = metallic.png; path = BlackCube/metallic.png; sourceTree = "<group>"; };
+		AA4148AD1AF75EED00FEEF8C /* normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = normal.png; path = BlackCube/normal.png; sourceTree = "<group>"; };
+		AA4148AE1AF75EED00FEEF8C /* tex.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tex.png; path = BlackCube/tex.png; sourceTree = "<group>"; };
+		AA4148B01AF7601E00FEEF8C /* cannon.obj */ = {isa = PBXFileReference; lastKnownFileType = text; name = cannon.obj; path = SmallCannon/cannon.obj; sourceTree = "<group>"; };
+		AA4148B11AF7601E00FEEF8C /* gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gloss.png; path = SmallCannon/gloss.png; sourceTree = "<group>"; };
+		AA4148B21AF7601E00FEEF8C /* metall.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = metall.png; path = SmallCannon/metall.png; sourceTree = "<group>"; };
+		AA4148B31AF7601E00FEEF8C /* normal2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = normal2.png; path = SmallCannon/normal2.png; sourceTree = "<group>"; };
+		AA4148B41AF7601E00FEEF8C /* tex.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tex.png; path = SmallCannon/tex.png; sourceTree = "<group>"; };
 		AA6AFFBE1AEF54C000EE2A0D /* woodcube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = woodcube.obj; sourceTree = "<group>"; };
 		AA6AFFBF1AEF54C000EE2A0D /* wooden_cube_gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_gloss.png; sourceTree = "<group>"; };
 		AA6AFFC01AEF54C000EE2A0D /* wooden_cube_metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_metallic.png; sourceTree = "<group>"; };
@@ -137,6 +152,42 @@
 			name = Math;
 			sourceTree = "<group>";
 		};
+		AA4148A91AF73BD000FEEF8C /* BlockGun */ = {
+			isa = PBXGroup;
+			children = (
+				AA4148A41AF73BCC00FEEF8C /* gat.obj */,
+				AA4148A51AF73BCC00FEEF8C /* gun_gat.png */,
+				AA4148A61AF73BCC00FEEF8C /* gun_gloss.png */,
+				AA4148A71AF73BCC00FEEF8C /* gun_metallic.png */,
+				AA4148A81AF73BCC00FEEF8C /* gun_normal.png */,
+			);
+			name = BlockGun;
+			sourceTree = "<group>";
+		};
+		AA4148AF1AF75EF100FEEF8C /* BlackCube */ = {
+			isa = PBXGroup;
+			children = (
+				AA4148AA1AF75EED00FEEF8C /* blackcube.obj */,
+				AA4148AB1AF75EED00FEEF8C /* gloss.png */,
+				AA4148AC1AF75EED00FEEF8C /* metallic.png */,
+				AA4148AD1AF75EED00FEEF8C /* normal.png */,
+				AA4148AE1AF75EED00FEEF8C /* tex.png */,
+			);
+			name = BlackCube;
+			sourceTree = "<group>";
+		};
+		AA4148B51AF7602200FEEF8C /* SmallCannon */ = {
+			isa = PBXGroup;
+			children = (
+				AA4148B01AF7601E00FEEF8C /* cannon.obj */,
+				AA4148B11AF7601E00FEEF8C /* gloss.png */,
+				AA4148B21AF7601E00FEEF8C /* metall.png */,
+				AA4148B31AF7601E00FEEF8C /* normal2.png */,
+				AA4148B41AF7601E00FEEF8C /* tex.png */,
+			);
+			name = SmallCannon;
+			sourceTree = "<group>";
+		};
 		AA6AFFBD1AEF544A00EE2A0D /* WoodenCube */ = {
 			isa = PBXGroup;
 			children = (
@@ -152,6 +203,9 @@
 		AABCD3AC1AE6E86E009328E9 = {
 			isa = PBXGroup;
 			children = (
+				AA4148B51AF7602200FEEF8C /* SmallCannon */,
+				AA4148AF1AF75EF100FEEF8C /* BlackCube */,
+				AA4148A91AF73BD000FEEF8C /* BlockGun */,
 				AA196E011AF3072200C66FFD /* Cocoa.framework */,
 				AA196DF91AF21B0900C66FFD /* SkyboxSystem.cpp */,
 				AA196DFA1AF21B0900C66FFD /* SkyboxSystem.h */,

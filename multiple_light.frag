@@ -56,6 +56,7 @@ void main() {
     vec3 ambAndDiff, spec;
     phongModel(Position, Normal, ambAndDiff, spec);
     vec4 shadeColor = vec4(ambAndDiff, 1.0) * texColor + vec4(spec, 1.0);
+    //gl_FragColor = vec4(1.0,0.0,0.0,1.0);
     //gl_FragColor = shadeColor;
     //gl_FragColor = mix(color, shadeColor, fogFactor);
 }

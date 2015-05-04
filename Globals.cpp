@@ -10,7 +10,6 @@
 
 //ShaderSystem* Globals::shader_system = new ShaderSystem();
 GLhandleARB Globals::light_shader;
-
 GLhandleARB Globals::reflection_shader;
 GLhandleARB Globals::skybox_shader;
 GLhandleARB Globals::refraction_shader;
