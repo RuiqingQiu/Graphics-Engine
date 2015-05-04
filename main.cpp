@@ -424,11 +424,23 @@ void displayCallback()
      glVertex3f( size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube);
      glVertex3f( size_of_texture_cube, size_of_texture_cube, size_of_texture_cube);
      glEnd();
-     
-     
-//     if(object){
-//         object->OnDraw();
-//     }
+    
+     glTranslatef(2, 0, 0);
+     object->pass = 3;
+     if(object){
+         object->OnDraw();
+     }
+     glTranslatef(-4, 0, 0);
+     object->pass = 4;
+     if(object){
+        object->OnDraw();
+     }
+     glTranslatef(2, 1, 0);
+     object->pass = 5;
+     if(object){
+        object->OnDraw();
+     }
+    
     
     //glutSolidSphere(1, 20, 20);
     //glUseProgramObjectARB(0);
@@ -530,6 +542,14 @@ int main(int argc, char *argv[])
     glAttachObjectARB(Globals::light_shader, vertexShaderHandle);
     glAttachObjectARB(Globals::light_shader, fragmentShaderHandle);
     glLinkProgramARB(Globals::light_shader);
+    
+    
+    vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/multiple_light.vert", GL_VERTEX_SHADER);
+    fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/multiple_light.frag", GL_FRAGMENT_SHADER);
+    Globals::multiply_light_shader = glCreateProgramObjectARB();
+    glAttachObjectARB(Globals::multiply_light_shader, vertexShaderHandle);
+    glAttachObjectARB(Globals::multiply_light_shader, fragmentShaderHandle);
+    glLinkProgramARB(Globals::multiply_light_shader);
     
     vertexShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/edge.vert", GL_VERTEX_SHADER);
     fragmentShaderHandle = loadShader("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/edge.frag", GL_FRAGMENT_SHADER);

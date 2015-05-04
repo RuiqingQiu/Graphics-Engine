@@ -20,5 +20,6 @@ public:
     static GLhandleARB reflection_shader;
     static GLhandleARB skybox_shader;
     static GLhandleARB edge_shader;
+    static GLhandleARB multiply_light_shader;
 };
 #endif /* defined(__Graphics_Engine__Globals__) */
