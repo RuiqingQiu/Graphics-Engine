@@ -15,3 +15,5 @@ GLhandleARB Globals::skybox_shader;
 GLhandleARB Globals::refraction_shader;
 GLhandleARB Globals::edge_shader;
 GLhandleARB Globals::multiply_light_shader;
+GLhandleARB Globals::blur_shader;
+

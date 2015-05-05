@@ -4,6 +4,8 @@ varying vec3 Normal;
 uniform sampler2D RenderTex;
 uniform int pass;
 
+uniform float width;
+uniform float height;
 //float EdgeThreshold;
 const vec3 lum = vec3(0.2126, 0.7152, 0.0722);
 //
@@ -48,8 +50,8 @@ vec4 get_pixel(in vec2 coords, in float dx, in float dy) {
 
 // returns pixel color
 float IsEdge(in vec2 coords){
-    float dxtex = 1.0 / 512.0 /*image width*/;
-    float dytex = 1.0 / 512.0 /*image height*/;
+    float dxtex = 1.0 / width /*image width*/;
+    float dytex = 1.0 / height /*image height*/;
     float pix[9];
     int k = -1;
     float delta;
@@ -80,8 +82,6 @@ float IsEdge(in vec2 coords){
 
 void main()
 {
-    float width = 512.0;
-    float height = 512.0;
     if(pass == 1){
         gl_FragColor = vec4(phongModel(Position, Normal),1.0);
     }

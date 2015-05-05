@@ -318,11 +318,6 @@ void Model3D::OnDraw(){
                                 glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
                 
                                 glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
-                                float value [4] = {float(shapes[i].mesh.tangent[i1].x),
-                                                   float(shapes[i].mesh.tangent[i1].y),
-                                                   float(shapes[i].mesh.tangent[i1].z),
-                                                   float(shapes[i].mesh.tangent[i1].w)};
-                                glUniform4fv(glGetUniformLocationARB(shader, "VertexTangent"), 1, value);
             }
             else if(pass == 4){
                 GLhandleARB shader = Globals::refraction_shader;
@@ -346,11 +341,6 @@ void Model3D::OnDraw(){
                 glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
                 
                 glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
-                float value [4] = {float(shapes[i].mesh.tangent[i1].x),
-                    float(shapes[i].mesh.tangent[i1].y),
-                    float(shapes[i].mesh.tangent[i1].z),
-                    float(shapes[i].mesh.tangent[i1].w)};
-                glUniform4fv(glGetUniformLocationARB(shader, "VertexTangent"), 1, value);
             }
             else if(pass == 5){
                 GLhandleARB shader = Globals::multiply_light_shader;
@@ -374,11 +364,29 @@ void Model3D::OnDraw(){
                 glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
                 
                 glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
-                float value [4] = {float(shapes[i].mesh.tangent[i1].x),
-                    float(shapes[i].mesh.tangent[i1].y),
-                    float(shapes[i].mesh.tangent[i1].z),
-                    float(shapes[i].mesh.tangent[i1].w)};
-                glUniform4fv(glGetUniformLocationARB(shader, "VertexTangent"), 1, value);
+            }
+            else if(pass == 6){
+                GLhandleARB shader = Globals::reflection_shader;
+                glUseProgramObjectARB(shader);
+                
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, texturaID[0]);
+                
+                glActiveTexture(GL_TEXTURE1);
+                glBindTexture(GL_TEXTURE_2D, texturaID[1]);
+                
+                
+                glActiveTexture(GL_TEXTURE2);
+                glBindTexture(GL_TEXTURE_2D, texturaID[2]);
+                
+                glActiveTexture(GL_TEXTURE3);
+                glBindTexture(GL_TEXTURE_2D, texturaID[3]);
+                glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
+                glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
+                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
+                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
+                
+                glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
             }
 
                 GLuint vt = glGetAttribLocationARB(Globals::light_shader,"VertexTangent");
