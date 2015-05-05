@@ -283,10 +283,10 @@ void prepare()
     glDisable(GL_CULL_FACE);
     
     
-    glUseProgramObjectARB(Globals::edge_shader);
-    glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 1);
-    glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "width"), float(width));
-    glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "height"), float(height));
+    glUseProgramObjectARB(Globals::blur_shader);
+    glUniform1i(glGetUniformLocationARB(Globals::blur_shader, "pass"), 1);
+    glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "width"), float(width));
+    glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "height"), float(height));
 
     glTranslatef(0,0,-3);
     glRotatef(angle, 0, 1, 0);
@@ -336,10 +336,10 @@ void final()
     
     glDisable(GL_TEXTURE_2D);
     
-    glUseProgramObjectARB(Globals::edge_shader);
-    glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 2);
-    glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "width"), float(width));
-    glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "height"), float(height));
+    glUseProgramObjectARB(Globals::blur_shader);
+    glUniform1i(glGetUniformLocationARB(Globals::blur_shader, "pass"), 2);
+    glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "width"), float(width));
+    glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "height"), float(height));
     //glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "RenderTex"), 0);
     //glutSolidTeapot(1);
     object->pass = 2;
