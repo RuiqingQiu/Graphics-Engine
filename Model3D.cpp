@@ -282,8 +282,10 @@ void Model3D::OnDraw(){
 //    else{
 //        
 //    }
+    GLuint vt;
     for (size_t i = 0; i < shapes.size(); i++) {
-        
+        vt = glGetAttribLocationARB(Globals::light_shader,"VertexTangent");
+
         for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
             int i1 = shapes[i].mesh.indices[3 * f + 0];
             int i2 = shapes[i].mesh.indices[3 * f + 1];
@@ -323,24 +325,26 @@ void Model3D::OnDraw(){
                 GLhandleARB shader = Globals::refraction_shader;
                 glUseProgramObjectARB(shader);
                 
-                glActiveTexture(GL_TEXTURE0);
+                glActiveTexture(GL_TEXTURE1);
                 glBindTexture(GL_TEXTURE_2D, texturaID[0]);
                 
-                glActiveTexture(GL_TEXTURE1);
+                glActiveTexture(GL_TEXTURE2);
                 glBindTexture(GL_TEXTURE_2D, texturaID[1]);
                 
                 
-                glActiveTexture(GL_TEXTURE2);
+                glActiveTexture(GL_TEXTURE3);
                 glBindTexture(GL_TEXTURE_2D, texturaID[2]);
                 
-                glActiveTexture(GL_TEXTURE3);
+                glActiveTexture(GL_TEXTURE4);
                 glBindTexture(GL_TEXTURE_2D, texturaID[3]);
-                glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
-                glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
-                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
-                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
+                glUniform1i(glGetUniformLocationARB(shader, "tex"), 1);
+                glUniform1i(glGetUniformLocationARB(shader, "norm"), 2);
+                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 3);
+                glUniform1i(glGetUniformLocationARB(shader, "metallic"),4);
                 
                 glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
+                vt = glGetAttribLocationARB(shader,"VertexTangent");
+
             }
             else if(pass == 5){
                 GLhandleARB shader = Globals::multiply_light_shader;
@@ -369,27 +373,29 @@ void Model3D::OnDraw(){
                 GLhandleARB shader = Globals::reflection_shader;
                 glUseProgramObjectARB(shader);
                 
-                glActiveTexture(GL_TEXTURE0);
+                glActiveTexture(GL_TEXTURE1);
                 glBindTexture(GL_TEXTURE_2D, texturaID[0]);
                 
-                glActiveTexture(GL_TEXTURE1);
+                glActiveTexture(GL_TEXTURE2);
                 glBindTexture(GL_TEXTURE_2D, texturaID[1]);
                 
                 
-                glActiveTexture(GL_TEXTURE2);
+                glActiveTexture(GL_TEXTURE3);
                 glBindTexture(GL_TEXTURE_2D, texturaID[2]);
                 
-                glActiveTexture(GL_TEXTURE3);
+                glActiveTexture(GL_TEXTURE4);
                 glBindTexture(GL_TEXTURE_2D, texturaID[3]);
-                glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
-                glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
-                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
-                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
+                glUniform1i(glGetUniformLocationARB(shader, "tex"), 1);
+                glUniform1i(glGetUniformLocationARB(shader, "norm"), 2);
+                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 3);
+                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 4);
                 
                 glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
+                vt = glGetAttribLocationARB(shader,"VertexTangent");
+
             }
 
-                GLuint vt = glGetAttribLocationARB(Globals::light_shader,"VertexTangent");
+                //vt = glGetAttribLocationARB(Globals::light_shader,"VertexTangent");
                 GLuint h = glGetAttribLocationARB(Globals::light_shader,"height");
 
             

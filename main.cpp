@@ -261,7 +261,7 @@ void initialize(void)
 }
 
 //First pass
-void prepare()
+void blur_prepare()
 {
     //angle = (angle + 1) % 360;
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -287,6 +287,95 @@ void prepare()
     glUniform1i(glGetUniformLocationARB(Globals::blur_shader, "pass"), 1);
     glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "width"), float(width));
     glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "height"), float(height));
+    
+    glTranslatef(2,1,-3);
+    glRotatef(angle, 0, 1, 0);
+    //glColor3f(1, 0, 0);
+    //glutSolidTeapot(1);
+    //glutSolidTeapot(1);
+    object->pass = 1;
+    if(object){
+        object->OnDraw();
+    }
+    
+    //glutSolidTeapot(0.75);
+    glUseProgramObjectARB(0);
+}
+
+//Second pass
+void blur_final()
+{
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    glViewport(0,0, width, height);
+    
+    glClearColor(1.,1.,1.,0.);
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60.0, double(width)/(double)height, 0.1, 1000.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glTranslatef(2,1,-3);
+    glRotatef(angle, 0, 1, 0);
+    
+    //glActiveTexture(GL_TEXTURE0);
+    //glBindTexture(GL_TEXTURE_2D, texture);
+    
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, color);
+    // Draw a textured quad
+    glBegin(GL_QUADS);
+    glTexCoord2f(0, 0); glVertex3f(1, 1, 0);
+    glTexCoord2f(0, 1); glVertex3f(1, 2, 0);
+    glTexCoord2f(1, 1); glVertex3f(2, 2, 0);
+    glTexCoord2f(1, 0); glVertex3f(2, 1, 0);
+    glEnd();
+    
+    
+    glDisable(GL_TEXTURE_2D);
+    
+    glUseProgramObjectARB(Globals::blur_shader);
+    glUniform1i(glGetUniformLocationARB(Globals::blur_shader, "pass"), 2);
+    glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "width"), float(width));
+    glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "height"), float(height));
+    //glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "RenderTex"), 0);
+    //glutSolidTeapot(1);
+    object->pass = 2;
+    if(object){
+        object->OnDraw();
+    }
+    glUseProgramObjectARB(0);
+}
+
+//First pass
+void prepare()
+{
+    //angle = (angle + 1) % 360;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glEnable(GL_TEXTURE_2D);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    
+    glViewport(0,0, width, height);
+    
+    glClearColor(1.0,1.0,1,0);
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60.0, double(width)/(double)height, 0.1, 1000.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    
+    glEnable(GL_DEPTH_TEST);
+    glDisable(GL_CULL_FACE);
+    
+    
+    glUseProgramObjectARB(Globals::edge_shader);
+    glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 1);
+    glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "width"), float(width));
+    glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "height"), float(height));
 
     glTranslatef(0,0,-3);
     glRotatef(angle, 0, 1, 0);
@@ -310,7 +399,7 @@ void final()
     glViewport(0,0, width, height);
     
     glClearColor(1.,1.,1.,0.);
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+    //glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
     
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -336,10 +425,10 @@ void final()
     
     glDisable(GL_TEXTURE_2D);
     
-    glUseProgramObjectARB(Globals::blur_shader);
-    glUniform1i(glGetUniformLocationARB(Globals::blur_shader, "pass"), 2);
-    glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "width"), float(width));
-    glUniform1f(glGetUniformLocationARB(Globals::blur_shader, "height"), float(height));
+    glUseProgramObjectARB(Globals::edge_shader);
+    glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "pass"), 2);
+    glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "width"), float(width));
+    glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "height"), float(height));
     //glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "RenderTex"), 0);
     //glutSolidTeapot(1);
     object->pass = 2;
@@ -352,7 +441,8 @@ void final()
 void displayCallback()
 {
     clock_t startTime = clock();
-    
+    blur_prepare();
+    blur_final();
     prepare();
     final();
 
@@ -445,7 +535,7 @@ void displayCallback()
      if(object){
         object->OnDraw();
      }
-     glTranslatef(2, -2, 0);
+     glTranslatef(0, -2, 0);
      object->pass = 6;
      if(object){
         object->OnDraw();

@@ -1,5 +1,10 @@
 varying vec4 Position;
 varying vec3 Normal;
+varying vec2 TexCoords;
+varying vec3 Tangent;
+
+varying vec3 LightDir;
+varying vec3 ViewDir;
 
 //for render pass
 uniform int pass;
@@ -35,6 +40,31 @@ vec4 get_pixel(in vec2 coords, in float dx, in float dy) {
     return texture2D(RenderTex,coords + vec2(dx, dy));
 }
 
+
+vec4 pass2(){
+    float dxtex = 1.0 / width /*image width*/;
+    float dytex = 1.0 / height /*image height*/;
+
+    vec2 pix = vec2(gl_FragCoord.x/width, gl_FragCoord.y/height);
+    vec4 sum = get_pixel(pix, 0.0*dxtex, 0.0*dytex) * 0.2270270270;
+    
+    sum += get_pixel(pix, 0.0*dxtex, 1.0*dytex) * 0.1945945946;
+    sum += get_pixel(pix, 0.0*dxtex, -1.0*dytex) * 0.1945945946;
+        
+    sum += get_pixel(pix, 0.0*dxtex, 2.0*dytex) * 0.1216216216;
+    sum += get_pixel(pix, 0.0*dxtex, -2.0*dytex) * 0.1216216216;
+        
+    sum += get_pixel(pix, 0.0*dxtex, 3.0*dytex) * 0.0540540541;
+    sum += get_pixel(pix, 0.0*dxtex, -3.0*dytex) * 0.0540540541;
+        
+    sum += get_pixel(pix, 0.0*dxtex, 4.0*dytex) * 0.0162162162;
+    sum += get_pixel(pix, 0.0*dxtex, -4.0*dytex) * 0.0162162162;
+    
+    return sum;
+
+}
+
+/*
 vec4 pass2()
 {
     vec2 pix = vec2(gl_FragCoord.x/width, gl_FragCoord.y/height);
@@ -50,7 +80,7 @@ vec4 pass2()
     sum += get_pixel(pix, -1.0, 1.0) * 0.012;
     //sum = vec4(1.0,0.0,0.0,1.0);
 
-    /*
+ 
     vec4 sum = get_pixel(pix, 0.0, 0.0) * 0.2270270270;
     sum += get_pixel(pix, 0.0, 1.0) * 0.1945945946;
     sum += get_pixel(pix, 0.0, -1.0) * 0.1945945946;
@@ -63,9 +93,9 @@ vec4 pass2()
     
     sum += get_pixel(pix, 0.0, 4.0) * 0.0162162162;
     sum += get_pixel(pix, 0.0, -4.0) * 0.0162162162;
-    */
+ 
     return sum;
-    /*
+ 
     ivec2 pix = ivec2( gl_FragCoord.xy );
     vec4 sum = texelFetch(Texture0, pix, 0) * Weight[0];
     sum += texelFetchOffset( Texture0, pix, 0, ivec2(0,1) ) * Weight[1];
@@ -77,9 +107,9 @@ vec4 pass2()
     sum += texelFetchOffset( Texture0, pix, 0, ivec2(0,4) ) * Weight[4];
     sum += texelFetchOffset( Texture0, pix, 0, ivec2(0,-4) ) * Weight[4];
     return sum;
-    */
+ 
 }
-
+*/
 vec4 pass3()
 {
     vec2 pix = vec2(gl_FragCoord.x/width, gl_FragCoord.y /height);
@@ -125,25 +155,5 @@ void main()
     }
 }
 
-/*
-uniform sampler2D image;
 
-out vec4 FragmentColor;
 
-uniform float offset[5] = float[]( 0.0, 1.0, 2.0, 3.0, 4.0 );
-uniform float weight[5] = float[]( 0.2270270270, 0.1945945946, 0.1216216216,
-                                  0.0540540541, 0.0162162162 );
-
-void main(void)
-{
-    FragmentColor = texture2D( image, vec2(gl_FragCoord)/1024.0 ) * weight[0];
-    for (int i=1; i<5; i++) {
-        FragmentColor +=
-        texture2D( image, ( vec2(gl_FragCoord)+vec2(0.0, offset[i]) )/1024.0 )
-        * weight[i];
-        FragmentColor +=
-        texture2D( image, ( vec2(gl_FragCoord)-vec2(0.0, offset[i]) )/1024.0 )
-        * weight[i];
-    }
-}
-*/
