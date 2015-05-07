@@ -70,6 +70,8 @@
 		AA4148BA1AF851AD00FEEF8C /* tex.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = tex.png; path = BlockyGun/tex.png; sourceTree = "<group>"; };
 		AA4148BB1AF96C5900FEEF8C /* blur.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = blur.vert; sourceTree = "<group>"; };
 		AA4148BC1AF96C6400FEEF8C /* blur.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = blur.frag; sourceTree = "<group>"; };
+		AA4148C01AFB558D00FEEF8C /* shadow.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shadow.vert; sourceTree = "<group>"; };
+		AA4148C11AFB559800FEEF8C /* shadow.frag */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = shadow.frag; sourceTree = "<group>"; };
 		AA6AFFBE1AEF54C000EE2A0D /* woodcube.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = woodcube.obj; sourceTree = "<group>"; };
 		AA6AFFBF1AEF54C000EE2A0D /* wooden_cube_gloss.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_gloss.png; sourceTree = "<group>"; };
 		AA6AFFC01AEF54C000EE2A0D /* wooden_cube_metallic.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = wooden_cube_metallic.png; sourceTree = "<group>"; };
@@ -309,6 +311,8 @@
 				AA196E001AF2223100C66FFD /* edge.frag */,
 				AA4148BB1AF96C5900FEEF8C /* blur.vert */,
 				AA4148BC1AF96C6400FEEF8C /* blur.frag */,
+				AA4148C01AFB558D00FEEF8C /* shadow.vert */,
+				AA4148C11AFB559800FEEF8C /* shadow.frag */,
 			);
 			name = Shader;
 			sourceTree = "<group>";

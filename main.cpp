@@ -107,9 +107,80 @@ void setupFBO()
     glBindRenderbuffer(GL_RENDERBUFFER, depth);
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
     glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depth);
-    
+
     CHECK_FRAMEBUFFER_STATUS();
+    
+    // The depth buffer
 }
+
+
+void setupShadowFBO()
+{
+    //GLfloat borderColor[4] = {0,0,0,0};
+    
+    GLenum FBOstatus;
+    
+    // Try to use a texture depth component
+    glGenTextures(1, &depth);
+    glBindTexture(GL_TEXTURE_2D, depth);
+    
+    // GL_LINEAR does not make sense for depth texture. However, next tutorial shows usage of GL_LINEAR and PCF
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    
+    // Remove artefact on the edges of the shadowmap
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP );
+    glTexParameterf( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP );
+    
+    //glTexParameterfv( GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor );
+    
+    
+    
+    // No need to force GL_DEPTH_COMPONENT24, drivers usually give you the max precision if available
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    
+    // create a framebuffer object
+    glGenFramebuffers(1, &fb);
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    
+    // Instruct openGL that we won't bind a color texture with the currently binded FBO
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    
+    // attach the texture to FBO depth attachment point
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,GL_TEXTURE_2D, depth, 0);
+    
+    // check FBO status
+    FBOstatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if(FBOstatus != GL_FRAMEBUFFER_COMPLETE)
+        printf("GL_FRAMEBUFFER_COMPLETE_EXT failed, CANNOT use FBO\n");
+    
+    // switch back to window-system-provided framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    /*
+    glGenFramebuffers(1, &fb);
+    glGenTextures(1, &depth);
+    glBindTexture(GL_TEXTURE_2D, depth);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, fb);
+    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth, 0);
+    
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    
+    if (Status != GL_FRAMEBUFFER_COMPLETE) {
+        printf("FB error, status: 0x%x\n", Status);
+    }*/
+    
+}
+
 
 GLhandleARB loadShader(char* filename, unsigned int type)
 {
@@ -257,7 +328,8 @@ void initialize(void)
     //object = new Model3D("/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/hammer.obj", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_tex.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_normals.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_gloss.png", "/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/h_metallic.png","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.vert","/Users/ruiqingqiu/Desktop/Qiu_Code/Graphics Engine/light.frag");
     light = new Light();
     light->setLightPosition(0, 10, 0);
-    setupFBO();
+    //setupFBO();
+    setupShadowFBO();
 }
 
 //First pass
@@ -333,7 +405,6 @@ void blur_final()
     glTexCoord2f(1, 0); glVertex3f(2, 1, 0);
     glEnd();
     
-    
     glDisable(GL_TEXTURE_2D);
     
     glUseProgramObjectARB(Globals::blur_shader);
@@ -380,7 +451,7 @@ void prepare()
     glTranslatef(0,0,-3);
     glRotatef(angle, 0, 1, 0);
     //glColor3f(1, 0, 0);
-    //glutSolidTeapot(1);
+    glutSolidTeapot(0.1);
     //glutSolidTeapot(1);
     object->pass = 1;
     if(object){
@@ -430,7 +501,7 @@ void final()
     glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "width"), float(width));
     glUniform1f(glGetUniformLocationARB(Globals::edge_shader, "height"), float(height));
     //glUniform1i(glGetUniformLocationARB(Globals::edge_shader, "RenderTex"), 0);
-    //glutSolidTeapot(1);
+    glutSolidTeapot(0.1);
     object->pass = 2;
     if(object){
         object->OnDraw();
@@ -468,6 +539,15 @@ void displayCallback()
 //    gluLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0);
 //    glRotated(angle, 0, 1, 0);
     
+    glBegin(GL_QUADS);
+    glNormal3f(0, 1, 0);
+    glColor3f(0.3, 0.3, 0.3);
+    glVertex3f( 100, -2, -100);
+    glVertex3f( 100, -2, 100);
+    glVertex3f( -100, -2, 100);
+    glVertex3f( -100, -2, -100);
+    glEnd();
+    glColor3f(1, 1, 1);
     
      int size_of_texture_cube = 100;
      
@@ -540,6 +620,8 @@ void displayCallback()
      if(object){
         object->OnDraw();
      }
+    glUseProgramObjectARB(0);
+
     
     
     //glutSolidSphere(1, 20, 20);
@@ -551,7 +633,6 @@ void displayCallback()
     glFlush();
     //Swap the off-screen buffer (the one we just drew to) with the on-screen buffer
     glutSwapBuffers();
-    glUseProgramObjectARB(0);
     
 }
 
