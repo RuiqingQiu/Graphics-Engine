@@ -22,10 +22,6 @@ float p_light[3] = {0,20,1};
 //Light lookAt
 float l_light[3] = {0,0,0};
 
-
-//Light mouvement circle radius
-float light_mvnt = 30.0f;
-
 // Hold id of the framebuffer for light POV rendering
 GLuint fboId;
 
@@ -111,68 +107,6 @@ GLhandleARB loadShader(char* filename, unsigned int type)
         }
         printf("Shader loaded done\n");
         return handle;
-/*
-    FILE *pfile;
-    GLhandleARB handle;
-    const GLcharARB* files[1];
-    
-    // shader Compilation variable
-    GLint result;				// Compilation code result
-    GLint errorLoglength ;
-    char* errorLogText;
-    GLsizei actualErrorLogLength;
-    
-    char buffer[400000];
-    memset(buffer,0,400000);
-    
-    // This will raise a warning on MS compiler
-    pfile = fopen(filename, "rb");
-    if(!pfile)
-    {
-        printf("Sorry, can't open file: '%s'.\n", filename);
-        exit(0);
-    }
-    
-    fread(buffer,sizeof(char),400000,pfile);
-    //printf("%s\n",buffer);
-    
-    
-    fclose(pfile);
-    
-    handle = glCreateShaderObjectARB(type);
-    if (!handle)
-    {
-        //We have failed creating the vertex shader object.
-        printf("Failed creating vertex shader object from file: %s.",filename);
-        exit(0);
-    }
-    
-    files[0] = (const GLcharARB*)buffer;
-    glShaderSourceARB(
-                      handle, //The handle to our shader
-                      1, //The number of files.
-                      files, //An array of const char * data, which represents the source code of theshaders
-                      NULL);
-    
-    glCompileShaderARB(handle);
-    
-    //Compilation checking.
-    glGetObjectParameterivARB(handle, GL_OBJECT_COMPILE_STATUS_ARB, &result);
-    
-    // If an error was detected.
-    if (!result)
-    {
-        //We failed to compile.
-        printf("Shader '%s' failed compilation.\n",filename);
-        
-        //Attempt to get the length of our error log.
-        glGetObjectParameterivARB(handle, GL_OBJECT_INFO_LOG_LENGTH_ARB, &errorLoglength);
-        
-        //Create a buffer to read compilation error message
-        std::cout << "error" << std::endl;
-    }
-    
-    return handle;*/
 }
 
 void loadShadowShader()
@@ -249,15 +183,6 @@ void setupMatrices(float position_x,float position_y,float position_z,float look
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(position_x,position_y,position_z,lookAt_x,lookAt_y,lookAt_z,0,1,0);
-}
-
-
-// This update only change the position of the light.
-//int elapsedTimeCounter = 0;
-void update(void)
-{
-    //p_light[0] = light_mvnt * cos(3652/1000.0);
-    //p_light[2] = light_mvnt * sin(3652/1000.0);
 }
 
 
@@ -354,7 +279,7 @@ void drawObjects(void)
     
 }
 
-void renderScene(void)
+void display_shadow(void)
 {
     //First step: Render from the light POV to a FBO, story depth values only
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT,fboId);	//Rendering offscreen
@@ -431,7 +356,7 @@ void renderScene(void)
     glutSwapBuffers();
 }
 
-void processNormalKeys(unsigned char key, int x, int y) {
+void processNormalKeys_shadow(unsigned char key, int x, int y) {
     
     if (key == 27){
         exit(0);
@@ -478,11 +403,11 @@ void processNormalKeys(unsigned char key, int x, int y) {
     else if(key == 'C'){
         p_light[2] -= 1;
     }
-    renderScene();
+    display_shadow();
 
 }
 
-void reshapeCallback(int w, int h)
+void reshape_shadow(int w, int h)
 {
     width = w;                                                       //Set the window width
     height = h;                                                      //Set the window height
@@ -503,11 +428,6 @@ int main(int argc, char** argv)
     glutInitWindowSize(width,height);
     glutCreateWindow("GLSL Shadow mapping");
     
-    // This call will grab openGL extension function pointers.
-    // This is not necessary for macosx and linux
-#ifdef _WIN32
-    getOpenGLFunctionPointers();
-#endif
     generateShadowFBO();
     loadShadowShader();
     
@@ -517,15 +437,10 @@ int main(int argc, char** argv)
     
     glEnable(GL_CULL_FACE);
     
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
-    
-    
-    
-    
-    glutDisplayFunc(renderScene);
-    //glutIdleFunc(renderScene);
-    glutReshapeFunc(reshapeCallback);
-    glutKeyboardFunc(processNormalKeys);
+    //glHint(GL_PERSPECTIVE_CORRECTION_HINT,GL_NICEST);
+    glutDisplayFunc(display_shadow);
+    glutReshapeFunc(reshape_shadow);
+    glutKeyboardFunc(processNormalKeys_shadow);
     
     glutMainLoop();
 }
