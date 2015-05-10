@@ -33,6 +33,14 @@ GLhandleARB shadowShaderId;
 GLuint shadowMapUniform;
 
 
+int drag_x_origin;
+int drag_y_origin;
+int dragging = 0;
+double camera_angle_v;
+double camera_angle_h;
+
+
+
 
 // Loading shader function
 GLhandleARB loadShader(char* filename, unsigned int type)
@@ -297,7 +305,7 @@ void display_shadow(void)
     glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
     
     //setupMatrices(p_light[0],p_light[1],p_light[2],l_light[0],l_light[1],l_light[2]);
-    setupMatrices(p_camera[0]+1,p_camera[1],p_camera[2],l_camera[0],l_camera[1],l_camera[2]);
+    setupMatrices(p_camera[0]+2,p_camera[1],p_camera[2],l_camera[0],l_camera[1],l_camera[2]);
 
     // Culling switching, rendering only backface, this is done to avoid self-shadowing
     glCullFace(GL_FRONT);
@@ -407,6 +415,29 @@ void processNormalKeys_shadow(unsigned char key, int x, int y) {
 
 }
 
+void mouse_click(int button, int state, int x, int y) {
+    if(button == GLUT_LEFT_BUTTON) {
+        if(state == GLUT_DOWN) {
+            dragging = 1;
+            drag_x_origin = x;
+            drag_y_origin = y;
+        }
+        else
+            dragging = 0;
+    }
+    display_shadow();
+}
+
+void mouse_move(int x, int y) {
+    if(dragging) {
+        camera_angle_v += (y - drag_y_origin)*0.3;
+        camera_angle_h += (x - drag_x_origin)*0.3;
+        drag_x_origin = x;
+        drag_y_origin = y;
+    }
+    display_shadow();
+}
+
 void reshape_shadow(int w, int h)
 {
     width = w;                                                       //Set the window width
@@ -441,7 +472,9 @@ int main(int argc, char** argv)
     glutDisplayFunc(display_shadow);
     glutReshapeFunc(reshape_shadow);
     glutKeyboardFunc(processNormalKeys_shadow);
-    
+    // here are the two new functions
+    glutMouseFunc(mouse_click);
+    glutMotionFunc(mouse_move);
     glutMainLoop();
 }
 
