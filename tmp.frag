@@ -1,4 +1,5 @@
 uniform sampler2D ShadowMap;
+uniform sampler2D ShadowMap2;
 
 varying vec4 ShadowCoord;
 varying vec4 Position;
