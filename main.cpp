@@ -400,6 +400,17 @@ void setTextureMatrix(void)
     glMultMatrixd (projection);
     glMultMatrixd (modelView);
     
+    glMatrixMode(GL_TEXTURE);
+    glActiveTextureARB(GL_TEXTURE1);
+    
+    glLoadIdentity();
+    glLoadMatrixd(bias);
+    
+    // concatating all matrice into one.
+    glMultMatrixd (projection);
+    glMultMatrixd (modelView);
+
+    
     // Go back to normal matrix mode
     glMatrixMode(GL_MODELVIEW);
 }
@@ -413,6 +424,11 @@ void startTranslate(float x,float y,float z)
     
     glMatrixMode(GL_TEXTURE);
     glActiveTextureARB(GL_TEXTURE7);
+    glPushMatrix();
+    glTranslatef(x,y,z);
+    
+    glMatrixMode(GL_TEXTURE);
+    glActiveTextureARB(GL_TEXTURE1);
     glPushMatrix();
     glTranslatef(x,y,z);
 }
@@ -460,6 +476,12 @@ void drawObjects(void)
         glutSolidTorus(1.0, 2.0, 20, 20);
         endTranslate();
     }
+    startTranslate(0, 2, 0);
+    object->pass = 6;
+    if(object){
+        object->OnDraw();
+    }
+    endTranslate();
     
 }
 
@@ -540,49 +562,101 @@ void display_shadow(void)
     glCullFace(GL_BACK);
     drawObjects();
     
+
+    
+    int size_of_texture_cube = 100;
+    glUseProgramObjectARB(Globals::skybox_shader);
+    glBegin(GL_QUADS);
+    glNormal3f(0, 0, -1);
+    glVertex3f( size_of_texture_cube,-size_of_texture_cube,size_of_texture_cube );
+    glVertex3f(-size_of_texture_cube,-size_of_texture_cube,size_of_texture_cube);
+    glVertex3f(-size_of_texture_cube, size_of_texture_cube,size_of_texture_cube); //back up right
+    glVertex3f(size_of_texture_cube,size_of_texture_cube, size_of_texture_cube ); //back up left
+    glEnd();
+    
+    //Front[0]
+    
+    
+    glBegin(GL_QUADS);
+    glNormal3f(0, 0, 1);
+    glVertex3f(  -size_of_texture_cube, -size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, -size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube);   //up right
+    glVertex3f(  -size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube); //up left
+    glEnd();
+    
+    
+    glBegin(GL_QUADS);
+    glNormal3f(-1, 0, 0);
+    glVertex3f(  -size_of_texture_cube, -size_of_texture_cube, size_of_texture_cube);
+    glVertex3f( -size_of_texture_cube, -size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( -size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube); //up
+    glVertex3f(  -size_of_texture_cube, size_of_texture_cube, size_of_texture_cube); //up
+    glEnd();
+    
+    
+    
+    glBegin(GL_QUADS);
+    glNormal3f(1, 0, 0);
+    glVertex3f( size_of_texture_cube, -size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, -size_of_texture_cube, size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube);
+    glEnd();
+    
+    glBegin(GL_QUADS);
+    glNormal3f(0.0, 1.0, 0.0);
+    glVertex3f( -size_of_texture_cube, size_of_texture_cube, size_of_texture_cube); //connect to back up left
+    glVertex3f( -size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube); //connect to front up left
+    
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, -size_of_texture_cube);
+    glVertex3f( size_of_texture_cube, size_of_texture_cube, size_of_texture_cube);
+    glEnd();
+    glUseProgramObjectARB(0);
+    
     // DEBUG only. this piece of code draw the depth buffer onscreen
     
-     glUseProgramObjectARB(0);
-     glMatrixMode(GL_PROJECTION);
-     glLoadIdentity();
-     glOrtho(-width/2,width/2,-height/2,height/2,1,20);
-     glMatrixMode(GL_MODELVIEW);
-     glLoadIdentity();
-     glColor3f(1,1,1);
-     glActiveTextureARB(GL_TEXTURE0);
-     glBindTexture(GL_TEXTURE_2D,depthTextureId);
-     glEnable(GL_TEXTURE_2D);
-     glTranslated(0,0,-1);
-     glBegin(GL_QUADS);
-     glTexCoord2d(0,0);glVertex3f(0,0,0);
-     glTexCoord2d(1,0);glVertex3f(width/2,0,0);
-     glTexCoord2d(1,1);glVertex3f(width/2,height/2,0);
-     glTexCoord2d(0,1);glVertex3f(0,height/2,0);
-     
-     
-     glEnd();
-     glDisable(GL_TEXTURE_2D);
-    
-    glUseProgramObjectARB(0);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-width/2,width/2,-height/2,height/2,1,20);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glColor3f(1,1,1);
-    glActiveTextureARB(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D,color);
-    glEnable(GL_TEXTURE_2D);
-    glTranslated(0,0,-1);
-    glBegin(GL_QUADS);
-    glTexCoord2d(0,0);glVertex3f(-width/2,0,0);
-    glTexCoord2d(1,0);glVertex3f(0,0,0);
-    glTexCoord2d(1,1);glVertex3f(0,height/2,0);
-    glTexCoord2d(0,1);glVertex3f(-width/2,height/2,0);
+         glUseProgramObjectARB(0);
+         glMatrixMode(GL_PROJECTION);
+         glLoadIdentity();
+         glOrtho(-width/2,width/2,-height/2,height/2,1,20);
+         glMatrixMode(GL_MODELVIEW);
+         glLoadIdentity();
+         glColor3f(1,1,1);
+         glActiveTextureARB(GL_TEXTURE0);
+         glBindTexture(GL_TEXTURE_2D,depthTextureId);
+         glEnable(GL_TEXTURE_2D);
+         glTranslated(0,0,-1);
+         glBegin(GL_QUADS);
+         glTexCoord2d(0,0);glVertex3f(width/3,height/3,0);
+         glTexCoord2d(1,0);glVertex3f(width/2,height/3,0);
+         glTexCoord2d(1,1);glVertex3f(width/2,height/2,0);
+         glTexCoord2d(0,1);glVertex3f(width/3,height/2,0);
     
     
-    glEnd();
-    glDisable(GL_TEXTURE_2D);
+         glEnd();
+         glDisable(GL_TEXTURE_2D);
+    
+        glUseProgramObjectARB(0);
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(-width/2,width/2,-height/2,height/2,1,20);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+        glColor3f(1,1,1);
+        glActiveTextureARB(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D,color);
+        glEnable(GL_TEXTURE_2D);
+        glTranslated(0,0,-1);
+        glBegin(GL_QUADS);
+        glTexCoord2d(0,0);glVertex3f(-width/2,height/3,0);
+        glTexCoord2d(1,0);glVertex3f(-width/3,height/3,0);
+        glTexCoord2d(1,1);glVertex3f(-width/3,height/2,0);
+        glTexCoord2d(0,1);glVertex3f(-width/2,height/2,0);
+        
+        
+        glEnd();
+        glDisable(GL_TEXTURE_2D);
     
     glutSwapBuffers();
 }
@@ -1138,10 +1212,7 @@ int main(int argc, char** argv)
     glutIdleFunc(idleCallback);
     glutKeyboardFunc(processNormalKeys);
     
-    
     importShaders();
-
-    
     
     faces.clear();
     getSkybox(CLOUDS);
