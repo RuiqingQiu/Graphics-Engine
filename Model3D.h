@@ -25,6 +25,12 @@ public:
     std::vector<tinyobj::material_t> materials;
     int shader_type;
     int pass;
+    
+    
+    vector<float> vertex;
+    vector<float> normal;
+    vector<float> texture;
+    vector<float> tangent;
     GLuint texturaID[4];
     
     string texture_map;
@@ -42,6 +48,6 @@ public:
 
     void OnDraw();
 private:
-    bool isTextured = false;
+    bool isTextured = true;
 };
 #endif /* defined(__Graphics_Engine__Model3D__) */

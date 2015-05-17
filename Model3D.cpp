@@ -200,10 +200,6 @@ Model3D::Model3D(string filename, string texture, string normal, string gloss, s
     {
         cout << "error" << endl;
     }
-    else{
-        cout << texturaID[0] << endl;
-        isTextured = true;
-    }
     //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
     //SOIL_free_image_data(image);
     
@@ -239,6 +235,64 @@ Model3D::Model3D(string filename, string texture, string normal, string gloss, s
     if (texturaID[3] == 0)
     {
         cout << "error 3" << endl;
+    }
+    
+    this->vertex.clear();
+    this->normal.clear();
+    this->texture.clear();
+    this->tangent.clear();
+    for (size_t i = 0; i < shapes.size(); i++) {
+        for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++){
+            int i1 = shapes[i].mesh.indices[3 * f + 0];
+            int i2 = shapes[i].mesh.indices[3 * f + 1];
+            int i3 = shapes[i].mesh.indices[3 * f + 2];
+            this->vertex.push_back(shapes[i].mesh.positions[3 * i1 + 0]);
+            this->vertex.push_back(shapes[i].mesh.positions[3 * i1 + 1]);
+            this->vertex.push_back(shapes[i].mesh.positions[3 * i1 + 2]);
+            
+            this->vertex.push_back(shapes[i].mesh.positions[3 * i2 + 0]);
+            this->vertex.push_back(shapes[i].mesh.positions[3 * i2 + 1]);
+            this->vertex.push_back(shapes[i].mesh.positions[3 * i2 + 2]);
+            
+            this->vertex.push_back(shapes[i].mesh.positions[3 * i3 + 0]);
+            this->vertex.push_back(shapes[i].mesh.positions[3 * i3 + 1]);
+            this->vertex.push_back(shapes[i].mesh.positions[3 * i3 + 2]);
+            
+            this->normal.push_back(shapes[i].mesh.normals[3 * i1 + 0]);
+            this->normal.push_back(shapes[i].mesh.normals[3 * i1 + 1]);
+            this->normal.push_back(shapes[i].mesh.normals[3 * i1 + 2]);
+            
+            this->normal.push_back(shapes[i].mesh.normals[3 * i2 + 0]);
+            this->normal.push_back(shapes[i].mesh.normals[3 * i2 + 1]);
+            this->normal.push_back(shapes[i].mesh.normals[3 * i2 + 2]);
+            
+            
+            this->normal.push_back(shapes[i].mesh.normals[3 * i3 + 0]);
+            this->normal.push_back(shapes[i].mesh.normals[3 * i3 + 1]);
+            this->normal.push_back(shapes[i].mesh.normals[3 * i3 + 2]);
+            
+            this->texture.push_back(shapes[i].mesh.texcoords[2 * i1 + 0]);
+            this->texture.push_back(shapes[i].mesh.texcoords[2 * i1 + 1]);
+            
+            this->texture.push_back(shapes[i].mesh.texcoords[2 * i2 + 0]);
+            this->texture.push_back(shapes[i].mesh.texcoords[2 * i2 + 1]);
+            
+            this->texture.push_back(shapes[i].mesh.texcoords[2 * i3 + 0]);
+            this->texture.push_back(shapes[i].mesh.texcoords[2 * i3 + 1]);
+            
+            this->tangent.push_back(float(shapes[i].mesh.tangent[i1].x));
+            this->tangent.push_back(float(shapes[i].mesh.tangent[i1].y));
+            this->tangent.push_back(float(shapes[i].mesh.tangent[i1].z));
+            
+            this->tangent.push_back(float(shapes[i].mesh.tangent[i2].x));
+            this->tangent.push_back(float(shapes[i].mesh.tangent[i2].y));
+            this->tangent.push_back(float(shapes[i].mesh.tangent[i2].z));
+            
+            this->tangent.push_back(float(shapes[i].mesh.tangent[i3].x));
+            this->tangent.push_back(float(shapes[i].mesh.tangent[i3].y));
+            this->tangent.push_back(float(shapes[i].mesh.tangent[i3].z));
+        }
+        
     }
 }
 
@@ -285,135 +339,125 @@ void Model3D::OnDraw(){
     GLuint vt;
     for (size_t i = 0; i < shapes.size(); i++) {
         vt = glGetAttribLocationARB(Globals::light_shader,"VertexTangent");
-
+        //Passing four maps
+        if(pass == 3){
+            GLhandleARB shader = Globals::light_shader;
+            glUseProgramObjectARB(shader);
+            
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texturaID[0]);
+            
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, texturaID[1]);
+            
+            
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, texturaID[2]);
+            
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, texturaID[3]);
+            glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
+            glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
+            glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
+            glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
+            
+            glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
+        }
+        else if(pass == 4){
+            GLhandleARB shader = Globals::refraction_shader;
+            glUseProgramObjectARB(shader);
+            
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, texturaID[0]);
+            
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, texturaID[1]);
+            
+            
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, texturaID[2]);
+            
+            glActiveTexture(GL_TEXTURE4);
+            glBindTexture(GL_TEXTURE_2D, texturaID[3]);
+            glUniform1i(glGetUniformLocationARB(shader, "tex"), 1);
+            glUniform1i(glGetUniformLocationARB(shader, "norm"), 2);
+            glUniform1i(glGetUniformLocationARB(shader, "gloss"), 3);
+            glUniform1i(glGetUniformLocationARB(shader, "metallic"),4);
+            
+            glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
+            vt = glGetAttribLocationARB(shader,"VertexTangent");
+            
+        }
+        else if(pass == 5){
+            GLhandleARB shader = Globals::multiply_light_shader;
+            glUseProgramObjectARB(shader);
+            
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texturaID[0]);
+            
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, texturaID[1]);
+            
+            
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, texturaID[2]);
+            
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, texturaID[3]);
+            glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
+            glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
+            glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
+            glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
+            
+            glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
+        }
+        else if(pass == 6){
+            GLhandleARB shader = Globals::reflection_shader;
+            glUseProgramObjectARB(shader);
+            
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, texturaID[0]);
+            
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, texturaID[1]);
+            
+            
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, texturaID[2]);
+            
+            glActiveTexture(GL_TEXTURE4);
+            glBindTexture(GL_TEXTURE_2D, texturaID[3]);
+            glUniform1i(glGetUniformLocationARB(shader, "tex"), 1);
+            glUniform1i(glGetUniformLocationARB(shader, "norm"), 2);
+            glUniform1i(glGetUniformLocationARB(shader, "gloss"), 3);
+            glUniform1i(glGetUniformLocationARB(shader, "metallic"), 4);
+            
+            glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
+            vt = glGetAttribLocationARB(shader,"VertexTangent");
+            
+        }
+        // Make sure no bytes are padded:
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        
+        // Select GL_MODULATE to mix texture with polygon color for shading:
+        glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+        
+        // Use bilinear interpolation:
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        
         for (size_t f = 0; f < shapes[i].mesh.indices.size() / 3; f++) {
             int i1 = shapes[i].mesh.indices[3 * f + 0];
             int i2 = shapes[i].mesh.indices[3 * f + 1];
             int i3 = shapes[i].mesh.indices[3 * f + 2];
-            int m1 = shapes[i].mesh.material_ids[f];
-                //material goes here
-                //glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, whiteSpecularMaterial);
-                //glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mShininess);
-//                //glUseProgramObjectARB(Globals::reflection_shader);
-
-                
-                //Passing four maps
-            if(pass == 3){
-                GLhandleARB shader = Globals::light_shader;
-                glUseProgramObjectARB(shader);
-
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, texturaID[0]);
-                
-                glActiveTexture(GL_TEXTURE1);
-                glBindTexture(GL_TEXTURE_2D, texturaID[1]);
-                
-                
-                glActiveTexture(GL_TEXTURE2);
-                glBindTexture(GL_TEXTURE_2D, texturaID[2]);
-                
-                glActiveTexture(GL_TEXTURE3);
-                glBindTexture(GL_TEXTURE_2D, texturaID[3]);
-                                glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
-                                glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
-                                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
-                                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
-                
-                                glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
-            }
-            else if(pass == 4){
-                GLhandleARB shader = Globals::refraction_shader;
-                glUseProgramObjectARB(shader);
-                
-                glActiveTexture(GL_TEXTURE1);
-                glBindTexture(GL_TEXTURE_2D, texturaID[0]);
-                
-                glActiveTexture(GL_TEXTURE2);
-                glBindTexture(GL_TEXTURE_2D, texturaID[1]);
-                
-                
-                glActiveTexture(GL_TEXTURE3);
-                glBindTexture(GL_TEXTURE_2D, texturaID[2]);
-                
-                glActiveTexture(GL_TEXTURE4);
-                glBindTexture(GL_TEXTURE_2D, texturaID[3]);
-                glUniform1i(glGetUniformLocationARB(shader, "tex"), 1);
-                glUniform1i(glGetUniformLocationARB(shader, "norm"), 2);
-                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 3);
-                glUniform1i(glGetUniformLocationARB(shader, "metallic"),4);
-                
-                glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
-                vt = glGetAttribLocationARB(shader,"VertexTangent");
-
-            }
-            else if(pass == 5){
-                GLhandleARB shader = Globals::multiply_light_shader;
-                glUseProgramObjectARB(shader);
-                
-                glActiveTexture(GL_TEXTURE0);
-                glBindTexture(GL_TEXTURE_2D, texturaID[0]);
-                
-                glActiveTexture(GL_TEXTURE1);
-                glBindTexture(GL_TEXTURE_2D, texturaID[1]);
-                
-                
-                glActiveTexture(GL_TEXTURE2);
-                glBindTexture(GL_TEXTURE_2D, texturaID[2]);
-                
-                glActiveTexture(GL_TEXTURE3);
-                glBindTexture(GL_TEXTURE_2D, texturaID[3]);
-                glUniform1i(glGetUniformLocationARB(shader, "tex"), 0);
-                glUniform1i(glGetUniformLocationARB(shader, "norm"), 1);
-                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 2);
-                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 3);
-                
-                glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
-            }
-            else if(pass == 6){
-                GLhandleARB shader = Globals::reflection_shader;
-                glUseProgramObjectARB(shader);
-                
-                glActiveTexture(GL_TEXTURE1);
-                glBindTexture(GL_TEXTURE_2D, texturaID[0]);
-                
-                glActiveTexture(GL_TEXTURE2);
-                glBindTexture(GL_TEXTURE_2D, texturaID[1]);
-                
-                
-                glActiveTexture(GL_TEXTURE3);
-                glBindTexture(GL_TEXTURE_2D, texturaID[2]);
-                
-                glActiveTexture(GL_TEXTURE4);
-                glBindTexture(GL_TEXTURE_2D, texturaID[3]);
-                glUniform1i(glGetUniformLocationARB(shader, "tex"), 1);
-                glUniform1i(glGetUniformLocationARB(shader, "norm"), 2);
-                glUniform1i(glGetUniformLocationARB(shader, "gloss"), 3);
-                glUniform1i(glGetUniformLocationARB(shader, "metallic"), 4);
-                
-                glUniformMatrix4fv(glGetUniformLocationARB(shader, "ModelView"),1,true, tmp.getFloatPointer());
-                vt = glGetAttribLocationARB(shader,"VertexTangent");
-
-            }
-
-                //vt = glGetAttribLocationARB(Globals::light_shader,"VertexTangent");
-                GLuint h = glGetAttribLocationARB(Globals::light_shader,"height");
-
+        
+          
+            //glEnable(GL_TEXTURE_2D);
             
-                // Make sure no bytes are padded:
-                glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-                
-                // Select GL_MODULATE to mix texture with polygon color for shading:
-                glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-                
-                // Use bilinear interpolation:
-                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-                glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-                //glEnable(GL_TEXTURE_2D);
-                
-                //glMaterialfv(GL_FRONT, GL_AMBIENT, materials[m1].ambient);
-                //glMaterialfv(GL_FRONT, GL_DIFFUSE, materials[m1].diffuse);
-                //glMaterialfv(GL_FRONT, GL_SPECULAR, materials[m1].specular);
-                //glMaterialfv(GL_FRONT, GL_SHININESS, &materials[m1].shininess);
+            //glMaterialfv(GL_FRONT, GL_AMBIENT, materials[m1].ambient);
+            //glMaterialfv(GL_FRONT, GL_DIFFUSE, materials[m1].diffuse);
+            //glMaterialfv(GL_FRONT, GL_SPECULAR, materials[m1].specular);
+            //glMaterialfv(GL_FRONT, GL_SHININESS, &materials[m1].shininess);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //THIS LINE OF CODE MUST BE AFTER THE TEXTURE LOADING CODE
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -479,14 +523,25 @@ void Model3D::OnDraw(){
             glVertex3f(shapes[i].mesh.positions[3 * i3 + 0], shapes[i].mesh.positions[3 * i3 + 1], shapes[i].mesh.positions[3 * i3 + 2]);
             
             glEnd();
-            
-//            if (isTextured){
-//                glBindTexture(GL_TEXTURE_2D, 0);
-//                glDisable(GL_TEXTURE_2D);
-//            }
-            
         }
+        /*
+        float *p = &this->vertex[0];
+        float *n = &this->normal[0];
+        float *t = &this->texture[0];
+        float *tan = &this->tangent[0];
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);//use texture coordinate
+        glVertexPointer(3, GL_FLOAT, 0, p);
+        glTexCoordPointer(2, GL_FLOAT, 0, t);
+        glNormalPointer(GL_FLOAT, 0, n);
         
+        glVertexAttribPointer(vt, 3, GL_FLOAT, GL_FALSE, 0, tan);
+        glDrawArrays(GL_TRIANGLES, 0, this->vertex.size() / 3);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);//use texture coordinate
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_VERTEX_ARRAY);  // disable vertex arrays
+        */
     }
     glUseProgramObjectARB(0);
     
